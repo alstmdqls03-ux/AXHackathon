@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ko">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AX 인재전쟁 — 최종 심사 리포트 (제출 전)</title>
+<style>
+body{font-family:'Apple SD Gothic Neo','Noto Sans KR',sans-serif;max-width:920px;margin:2rem auto;padding:0 1.5rem;color:#1a1a2e;line-height:1.65}
+h1{font-size:1.5rem;border-bottom:3px solid #16324f;padding-bottom:.5rem}
+h2{font-size:1.15rem;margin-top:2rem;color:#16324f;border-left:4px solid #16324f;padding-left:.6rem}
+table{border-collapse:collapse;width:100%;margin:1rem 0;font-size:.9rem}
+th,td{border:1px solid #cdd5df;padding:.45rem .6rem;text-align:left;vertical-align:top}
+th{background:#eef2f7}
+td.num{text-align:right;white-space:nowrap}
+.ok{color:#1a7f4b;font-weight:600}
+.warn{color:#a05a00;font-weight:600}
+.badge{display:inline-block;background:#1a7f4b;color:#fff;border-radius:4px;padding:.1rem .5rem;font-size:.78rem;font-weight:600}
+.card{border:1px solid #cdd5df;border-radius:8px;padding:1rem 1.2rem;margin:1rem 0}
+.meta{color:#555;font-size:.85rem}
+ul{padding-left:1.2rem} li{margin:.3rem 0}
+code{background:#f0f2f5;padding:0 .3rem;border-radius:3px;font-size:.88em}
+.runbook{background:#eef7f1;border:1px solid #9fd3b4;border-radius:8px;padding:1rem 1.2rem}
+</style>
+<h1>최종 심사 리포트 — 3사 제출물 <span class="badge">전원 제출 승인</span></h1>
+<p class="meta">생성: 2026-07-10 · 마감: 2026-07-10 23:59:59 · 심사 방식: AI 심사위원 시뮬레이션 2라운드 (v1 엄격 루브릭 → 수정 → v2 상위 1% 잣대) + 적대적 팩트체커 + 재현 실행(Python 3.9)</p>
+
+<h2>1. 최종 점수 (문항당 20점, 총 100점)</h2>
+<table>
+<tr><th>회사 / 플러그인</th><th class="num">v1</th><th class="num">v2 (상위 1% 잣대)</th><th class="num">Q1</th><th class="num">Q2</th><th class="num">Q3</th><th class="num">Q4</th><th class="num">Q5</th><th>판정</th></tr>
+<tr><td>삼일PwC — haenggan-audit</td><td class="num">93</td><td class="num"><b>97</b></td><td class="num">19.5</td><td class="num">19.5</td><td class="num">19.5</td><td class="num">19.5</td><td class="num">19</td><td class="ok">제출 승인 — "1등 다툼 가능 수준"</td></tr>
+<tr><td>카카오페이증권 — trade-decision-report</td><td class="num">95</td><td class="num"><b>94.5</b></td><td class="num">19</td><td class="num">19</td><td class="num">19.5</td><td class="num">19</td><td class="num">18</td><td class="ok">제출 승인 — "1등 경쟁력 충분"</td></tr>
+<tr><td>채널톡 — resolution-lift</td><td class="num">95</td><td class="num"><b>93</b></td><td class="num">18</td><td class="num">19</td><td class="num">19</td><td class="num">19</td><td class="num">18</td><td class="ok">제출 승인 — "드문 상위권 제출물"</td></tr>
+</table>
+<p class="meta">주: v1과 v2는 잣대가 다름 (v2가 훨씬 엄격). v2 감점의 대부분이었던 "로그 1차 증거 결락"은 채점 후 step-08 클로징 세션으로 해소됨 — 아래 §3.</p>
+
+<h2>2. 심사 루프에서 잡아낸 것 (수정 완료)</h2>
+<div class="card">
+<b>실격성 리스크 (P0) — 전부 해소</b>
+<ul>
+<li><b>채널톡 load.py가 macOS 기본 Python(3.9)에서 SyntaxError</b> — PEP 701 중첩 f-string. 심사자가 README 1단계부터 막히는 최대 탈락 요인 → 3.9 호환으로 수정, /usr/bin/python3로 컴파일·재현 검증. 삼일·카카오 스크립트는 전수 컴파일 검사 통과.</li>
+<li><b>카카오 src/ 안의 잘린 로그 스냅샷</b> (발췌 오해 소지) → cmp byte-identical 검증 후 무편집 이동(logs/stray/), 설치 캐시 전파본까지 정리. 삼일 동일 처리.</li>
+<li><b>삼일 문항 4↔문항 2 내부 모순</b> (KDI 미러 vs 실제 제출 URL) → 최종 경위로 수정. <b>단위 미선언</b>(8.4억 vs 원시값 840) → "단위: 백만원" 선언 추가.</li>
+</ul>
+<b>정합성·정밀도 (P1) — 전부 해소</b>
+<ul>
+<li>3사 공통: 훅 로그에 검증 1차 증거(명령·출력·report-id) 부재 → 재실행 + 최종 응답 인용 방식으로 로그에 적재 (오케스트레이터가 grep으로 최종 확인).</li>
+<li>카카오 출처 수치 3건 정정 (약 20만 명 / 약 두 배 / 1,600%에 달했으며 — 원문 자구 기준), README 설치 명령을 실측 원문으로 교체.</li>
+<li>채널톡 무출처 수치 완화, 로그에 없는 일화를 로그 실재 사례로 교체, ALF 학습 문구를 출처 자구에 정합.</li>
+</ul>
+</div>
+
+<h2>3. 증거 사슬 상태 (제출물 정합성)</h2>
+<table>
+<tr><th>검증 항목</th><th>채널톡</th><th>카카오</th><th>삼일</th></tr>
+<tr><td>자수 (800/800/1000/800/800)</td><td class="ok">671/677/996/731/796</td><td class="ok">694/716/988/682/794</td><td class="ok">544/624+/968/757+/775</td></tr>
+<tr><td>출처 URL 접근성 (무로그인)</td><td class="ok">7건 200</td><td class="ok">7건 200 (07-10 재확인)</td><td class="ok">6건 200</td></tr>
+<tr><td>재현 실행 (Python 3.9)</td><td class="ok">55.0%→85.0% 전건 일치</td><td class="ok">7지표+report-id 일치</td><td class="ok">후보 19건+심은 신호 3종</td></tr>
+<tr><td>훅 로그 1차 증거</td><td class="ok">적재 확인</td><td class="ok">적재 확인 (report-id 포함)</td><td class="ok">적재 확인 (체커 stdout)</td></tr>
+<tr><td>src/ 내 로그 잔존</td><td class="ok">0건</td><td class="ok">0건</td><td class="ok">0건</td></tr>
+<tr><td>submission.zip</td><td class="ok">120KB ✓구성 검증</td><td class="ok">1.2MB ✓구성 검증</td><td class="ok">104KB ✓구성 검증</td></tr>
+</table>
+<p class="meta">전역: 비밀정보 패턴 0건 · 회사 간 교차 오염 0건 · 로그 편집·삭제 0건(무편집 이동은 cmp 검증 + README.txt 경위 문서화 + git 이력 보존)</p>
+
+<h2>4. 남은 것 (선택 항목)</h2>
+<div class="card">
+<ul>
+<li class="warn">Codex 모델 턴 E2E (삼일·카카오): 계정 쿼터(8/4 리셋)로 미완 — 문항 5에 정직 고지되어 있고 등록·설치·트리거·스크립트 계층은 전부 검증됨. 쿼터 있는 계정 확보 시 1회 완주 후 rollout을 logs/codex/에 추가하고 재제출하면 마지막 리스크까지 제거.</li>
+<li>폼 입력 시 폼 자체 카운터로 자수 최종 확인 (채널톡 문항 3이 996/1000으로 타이트).</li>
+<li>pane 세션을 추가로 돌린 경우 업로드 직전 <code>orchestration/make_zip.sh &lt;회사&gt;</code>로 zip 재생성 (로그 최신화).</li>
+</ul>
+</div>
+
+<h2>5. 제출 런북</h2>
+<div class="runbook">
+<ol>
+<li>각 회사 제출 폼 접속 (채널톡 opportunities/1 · 카카오 opportunities/4 · 삼일 opportunities/5)</li>
+<li><code>&lt;회사&gt;/question.md</code>의 5문항 본문을 폼에 복붙 → 폼 카운터로 자수 확인</li>
+<li>문항 2의 출처 URL들을 별도 입력란에 추가 (+버튼)</li>
+<li><code>&lt;회사&gt;/submission.zip</code> 업로드 → 제출</li>
+<li>마감(23:59:59) 전 재제출 가능 — E2E 완주 등 개선 시 zip 재생성 후 재업로드</li>
+</ol>
+</div>
+</html>
