@@ -28,9 +28,9 @@ ax-hackathon/                  # 공용 워크스페이스 (이 repo, 회사 내
 ├── RESEARCH_PLAYBOOK.md       # 리서치 방법·출처 규칙
 ├── submission-spec.md         # 제출 규정 전체 정리 (원문 검증 완료)
 ├── logs/                      # 루트 세션 로그 (훅 자동 생성)
-├── channeltalk/               # 채널톡 제출 워크스페이스 (독립 git)
-├── kakaopay-securities/       # 카카오페이증권 제출 워크스페이스 (독립 git)
-└── samil-pwc/                 # 삼일PwC 제출 워크스페이스 (독립 git)
+├── channeltalk/               # 채널톡 제출 워크스페이스
+├── kakaopay-securities/       # 카카오페이증권 제출 워크스페이스
+└── samil-pwc/                 # 삼일PwC 제출 워크스페이스
 ```
 
 각 회사 폴더는 자체 CLAUDE.md·README.md·question.md를 가지며, 최종적으로 그 폴더에서 submission.zip을 만든다.

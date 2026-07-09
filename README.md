@@ -13,7 +13,7 @@
 | [WORKFLOW.md](WORKFLOW.md) | 5단계 파이프라인 + 타임박스 + 제출 체크리스트 |
 | [RESEARCH_PLAYBOOK.md](RESEARCH_PLAYBOOK.md) | 리서치 방법, 출처 우선순위·기록 규칙 |
 
-## 회사 폴더 (각각 독립 git, 독립 제출물)
+## 회사 폴더 (독립 제출물)
 
 | 폴더 | 회사 | 제출 폼 |
 |---|---|---|
