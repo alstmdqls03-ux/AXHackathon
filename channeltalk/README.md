@@ -6,7 +6,7 @@
 
 ## 설치 (심사자용)
 
-요구 사항: Codex CLI + Python 3.8+ (외부 패키지·네트워크·API 키 **불필요**)
+요구 사항: Codex CLI + Python 3.9+ (macOS 기본 `/usr/bin/python3` 3.9.6에서 컴파일·실행 검증. 외부 패키지·네트워크·API 키 **불필요**)
 
 **방법 A — 로컬 marketplace 등록 (검증 완료 절차, Codex CLI 0.142 기준)**
 
@@ -25,6 +25,7 @@ EOF
 # 3) 등록·설치
 codex plugin marketplace add "$(pwd)/my-marketplace"
 codex plugin add resolution-lift@ax-local
+# 이름 충돌(ax-local이 이미 등록됨) 시: codex plugin marketplace remove ax-local 후 재시도
 ```
 
 (참고: OpenAI 플러그인 문서 https://developers.openai.com/codex/plugins — 루트 `marketplace.json`은 인식되지 않고 `.agents/plugins/marketplace.json`만 지원됨을 실행으로 확인)

@@ -163,11 +163,15 @@ def main() -> None:
     (out_dir / "unresolved.json").write_text(json.dumps(unresolved, ensure_ascii=False, indent=2), encoding="utf-8")
     (out_dir / "faq.json").write_text(json.dumps(faq, ensure_ascii=False, indent=2), encoding="utf-8")
 
+    notes = ""
+    if inferred_any:
+        notes += ", resolved 추정"
+    if counter["masked"]:
+        notes += f", PII 마스킹 {counter['masked']}건"
+    if skipped:
+        notes += f", 건너뜀 {skipped}건"
     print(f"[resolution-lift:load] 적재 완료 — 총 {total}건 / 해결 {resolved_n}건 / 미해결 {len(unresolved)}건 "
-          f"(기준 해결률 {summary['baseline_resolution_rate']*100:.1f}%"
-          f"{', resolved 추정' if inferred_any else ''}"
-          f"{f', PII 마스킹 {counter['masked']}건' if counter['masked'] else ''}"
-          f"{f', 건너뜀 {skipped}건' if skipped else ''})")
+          f"(기준 해결률 {summary['baseline_resolution_rate']*100:.1f}%{notes})")
     print(f"[resolution-lift:load] 출력: {out_dir}/summary.json, {out_dir}/unresolved.json, {out_dir}/faq.json")
     if inferred_any:
         print("[resolution-lift:load] 주의: resolved 컬럼이 없거나 비어 있어 agent_answer 존재 여부로 미해결을 추정했습니다."
