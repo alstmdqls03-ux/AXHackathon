@@ -106,3 +106,26 @@
 
 ### 오케스트레이터에게 요청
 **솔루션 확정 승인 대기** — 확정 피치(후보 1: SKILL.md + diagnose.py/render.py + 스키마 검증, 데모 3종)의 승인/수정 지시가 있을 때까지 어떤 후속 작업(step-05+)도 시작하지 않는다.
+→ (후속) 2026-07-09 사용자 승인 완료: 후보 1 하이브리드, §5 강제 구조 그대로 코드화 조건 (`DECISION.md`).
+
+## [step-05] 구현 Plan + 구현 — 2026-07-09 23:37
+
+### 한 일
+- `context/plan.md` 작성: src/ 구조, §5 강제 구조→코드 매핑표, 수치 규칙(half-away-from-zero, metric id는 solution.md 표기 유지), 데모 범위, 검증 계획.
+- `src/` 구축 (표준 라이브러리만, MCP 서버 없음): `.codex-plugin/plugin.json`(name·version·description) / `skills/trade-decision-report/SKILL.md`(절차·판단 기준·실패 동작 표·절대 규칙 4건) / `scripts/diagnose.py`(결정론 진단) / `scripts/render.py`(스키마 검증+고정 템플릿 조립+report-id 스탬프) / `scripts/check_docs.py`(문서 규율 검사) / `samples/` 4종(trades.csv·options.sample.json·options_violation.json·생성된 diagnosis.json·report.md).
+- `README.md`(폴더 루트) 작성: 개요/설치·실행(플러그인 등록 + 스크립트 직접 실행 양쪽)/작동 방식(문항 3과 동일 구성)/검증/한계 고지.
+- **검증 실제 실행** (이 세션, 로그 소재): 정상 1 + 예외 3 + check_docs + --chosen 스모크.
+
+### 핵심 발견과 결정
+- 정상 실행의 진단 수치가 solution.md 기대값과 **전항 일치**: -5.88% / -5.95% / -4.90% / +1.05%p / -34,106원 / -34,569원 / 세금 0원. report-id 스탬프(8d1a510771e6) 생성 확인.
+- 예외 3종 전부 의도대로: ①price 누락→`REQUIRED_INPUT_MISSING`(필요 이유 포함, exit 1) ②위반 주입→`RANKING_LANGUAGE_DETECTED`("가장")+`UNGROUNDED_NUMBER`(-40,000) 동시 검출·리포트 미생성 ③SELL 행→`UNSUPPORTED_SCOPE`. check_docs 통과.
+- DECISION.md 강제 구조 4건 전부 코드화: id enum 4종+제목 하드코딩+가나다순 정렬+denylist+200자 제한 / evidence 실존 metric 검증+숫자 리터럴 금지·플레이스홀더 치환 / render.py 단독 조립+스탬프 / check_docs.py.
+- 수정 1건: 체크리스트 헤더 조사 오류("보유 지속를"→"보유 지속 선택 시") 발견 즉시 수정 후 재렌더 확인.
+
+### 게이트 체크
+- ✅ plugin.json에 name·version·description — trade-decision-report / 0.1.0 / 설명 포함
+- ✅ SKILL.md에 실패·정보부족 동작 포함 — 8행 표(입력 누락·CSV 오류·범위 외·거부 코드 3종·모호 의도·추천 요구) + 절대 규칙(임의 값 대입 금지)
+- ✅ README ↔ 문항 3에 쓸 내용 일치 — README "작동 방식" 절을 문항 3 원본으로 사용하도록 구성(절차/판단 기준의 코드 강제/실패 동작/한계 고지)
+
+### 오케스트레이터에게 요청
+없음. 참고: samples/diagnosis.json·report.md는 검증 실행의 산출물로 src/에 포함(심사자가 기대 출력을 바로 대조 가능).
