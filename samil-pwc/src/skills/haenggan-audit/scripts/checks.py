@@ -17,7 +17,7 @@ from pathlib import Path
 # ── 판단 임계값 (스킬 문서에 공개된 '추론 방향성'의 일부) ────────────────
 YOY_SWING_RATIO = 0.5        # 계정 전기 대비 ±50% 이상 변동
 YOY_MIN_SCALE = 0.01         # 매출의 1% 미만 계정은 무시
-PERIOD_END_FROM = "-12-20"   # 기말 전표 스캔 시작일 (12/20 이후)
+PERIOD_END_FROM = "12-20"    # 기말 전표 스캔 시작일 (12/20 이후, MM-DD)
 LARGE_JE_REVENUE_PCT = 0.01  # 연매출의 1% 이상이면 대형 전표
 CAPEX_ACCOUNTS = ("유형자산", "무형자산", "건설중인자산")
 REPAIR_KEYWORDS = ("수선", "보수", "수리", "정비")
@@ -103,7 +103,7 @@ def check_h1(data, out):
             amt, memo = num(r, "금액"), r.get("적요", "")
             maker, approver = r.get("작성자", ""), r.get("승인자", "")
             # 4) 기말(12/20 이후) 대형 전표
-            if PERIOD_END_FROM in date[4:] or date[5:] >= PERIOD_END_FROM[1:]:
+            if len(date) >= 10 and date[5:10] >= PERIOD_END_FROM:
                 if large and amt >= large:
                     out.append(candidate(
                         f"H1-PE-{je}-{r.get('차대')}", "H1", "period_end_large", "medium",

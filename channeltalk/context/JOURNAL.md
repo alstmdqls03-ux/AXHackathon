@@ -105,3 +105,25 @@
 
 ### 오케스트레이터에게 요청
 **솔루션 확정 승인 대기** — S2(하이브리드, resolution-lift) 승인 또는 수정 지시를 요청. 승인 전 후속 작업(구현) 시작하지 않음.
+
+## [step-05] 구현 Plan + 구현 — 2026-07-09 23:31
+
+### 한 일
+- `context/plan.md` 작성: src/ 구조, 파일 경유 파이프라인 계약(스크립트↔LLM), 구현 순서, 검증 계획(정상 1+예외 1), 과잉 설계 금지 체크.
+- `src/` 구현 완료: `.codex-plugin/plugin.json`(name/version/description/skills) · `skills/resolution-lift/SKILL.md`(4단계 절차, 갭 유형 A/B/C/D/REVIEW 판정 기준표, confidence 기준, 초안 작성 규칙(정책 지어내기 금지·policy_check), 재시뮬레이션 채점 기준, 배치 규칙, 실패·정보부족 동작 표) · `scripts/load.py`(적재·스키마 검증·PII 마스킹·미해결 분리, argparse) · `scripts/simulate.py`(LLM 산출물 스키마 검증 — 환각 티켓 ID 차단·전건 커버 강제·C/D/REVIEW 초안 금지 — 집계·리포트 4종 렌더) · `examples/`(합성 티켓 60건: 해결 33/미해결 27, 5개 갭 클러스터 + REVIEW 1건 설계; faq.csv 12건; broken CSV).
+- 스모크 테스트 4종 통과: ①정상 적재(60/33/27, 기준 55.0%) ②broken 스키마 → 템플릿 안내 후 exit 1 ③simulate 입력 누락 → 단계 안내 후 exit 1 ④최소 유효 JSON → 리포트 4종 렌더 + 환각 ID 주입 시 거부 확인.
+- 버그 1건 수정: load.py 인자 파싱(--out 값이 위치 인자로 집계) → argparse 교체.
+- `README.md`(zip 루트) 재작성: 개요/설치 3방식(repo·personal·폴백)/사용법/작동 방식(4단계 표+판단 기준)/실패 동작 표/검증 재현 명령/구조 — 문항 3에 그대로 옮길 수 있는 서술.
+
+### 핵심 발견과 결정
+- 신뢰성 장치를 결정적 코드에 배치: 갭 주장에 근거 티켓 필수, 환각 ID·미커버 시 리포트 생성 자체를 거부(simulate.py), '부분' 판정은 보수적으로 미해결 집계 — LLM 관대 채점 방지.
+- marketplace.json 정확 스키마는 공개 문서 확인이 필요해 README에 OpenAI 문서 링크 + 폴백(방법 C: SKILL.md 직접 실행)을 제공 — 심사 환경이 어긋나도 구동 가능.
+- DECISION.md 하한 프레이밍 준수: README 배경 서술을 "최고 사례(80%)에서도 최소 20% 미해결"로 통일.
+
+### 게이트 체크
+- [✅] plugin.json에 name·version·description — resolution-lift / 1.0.0 / 한 줄 설명 + skills 경로 (json 파싱 확인)
+- [✅] SKILL.md에 실패·정보부족 동작 포함 — 본문 각 단계 + 말미 9행 요약표
+- [✅] README ↔ 문항 3에 쓸 내용 일치 — 절차(4단계)·지식(FAQ+상담사 실답변)·판단 기준(A/B/C/D/REVIEW·confidence·채점)·실패 동작 표를 README에 동일 서술
+
+### 오케스트레이터에게 요청
+없음 (전체 사이클 통합 검증 — LLM 단계 포함 정상 1 + 예외 — 은 step-06에서 수행 예정, 검증 계획은 plan.md에 기재)
