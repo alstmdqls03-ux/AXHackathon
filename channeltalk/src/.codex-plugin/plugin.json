@@ -1,0 +1,6 @@
+{
+  "name": "resolution-lift",
+  "version": "1.0.0",
+  "description": "미해결 상담 로그에서 지식 갭을 진단하고 FAQ·규칙 초안을 만든 뒤 재시뮬레이션으로 해결률 개선을 검증하는 AI 상담 해결률 개선 파이프라인 (이커머스 CS)",
+  "skills": "./skills/"
+}

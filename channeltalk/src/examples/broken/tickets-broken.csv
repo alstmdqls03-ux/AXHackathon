@@ -1,0 +1,3 @@
+ticket_id,created_at,content,resolved
+T-9001,2026-06-01,"주문한 상품 언제 도착하나요?",true
+T-9002,2026-06-02,"환불 계좌를 바꾸고 싶어요",false
