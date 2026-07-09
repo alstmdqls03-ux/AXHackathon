@@ -124,3 +124,26 @@
 
 ### 오케스트레이터에게 요청
 없음 — 다음 스텝(검증·로그 정합 또는 question.md 작성) 지시 대기. 참고: DECISION 일정 게이트(7-10 오전) 판단 자료로 "가설군 3종 체커 검증 완료" 상태임.
+
+## [step-06] 검증 + 제출 준비 — 2026-07-09 23:46
+
+### 한 일
+- **직접 구동 검증(심사자 절차 재현)**: marketplace 구성→`codex plugin marketplace add`→`codex plugin add haenggan-audit@samil-local-plugins`→`codex plugin list`(installed, enabled 1.0.0)까지 성공. `codex exec`로 정상 시나리오 실행 — 스킬 트리거·SKILL.md 절차 추적(인벤토리 완료→체커 로드)까지 확인 후 **OpenAI 계정 사용 한도 초과로 보고서 생성 전 중단** (플러그인 결함 아님, 22,212 tokens 시점). 전 과정 `context/verification.md`에 기록.
+- 발견·수정: ①README 설치 명령이 CLI 규격과 다름(`plugin add`는 `<plugin>@<marketplace>` 필요) → README 교정 ②Codex rollout 세션은 에러 중단으로 Stop 훅 미발화 → 원본 파일을 무편집 복사(`cmp` byte-identical 확인)로 `logs/codex/`에 포함.
+- 체커 계층 검증(B절): 정상(후보 19건, 심은 신호 3종 전부) + 예외(monthly_series 제거 → H2만 skip, exit 0) — 이 세션 로그에 실행 기록 실존.
+- `question.md` 5문항 완성: 자수 python len 검증 **544/619/940/717/766 — 전 문항 제한 내**, 문항 2 출처 URL 6건(대장 S01·S17·S20·S19·S11·S14, 전건 접근성 확인분), 문항 3은 README 작동 방식 절과 동일 내용, 문항 5는 verification.md 기반.
+- zip 드라이런: 루트 `src/`·`README.md`·`logs/`만, 30파일 82KB(≤100MB), pycache 등 오염 0 — WORKFLOW 체크리스트 전 항목 수행.
+
+### 핵심 발견과 결정
+- **훅이 셸 cwd 기준으로 저장** → step-05~06 사이 cwd가 스킬 폴더였던 턴에 `src/skills/haenggan-audit/logs/claude-code/<세션id>.jsonl` 스테일 스냅샷 생성됨. 로그 불가침 규칙(위치 무관)에 따라 **본 세션은 건드리지 않음** — zip 전 처리(이동/포함)는 사용자 결정으로 이관. save_log.py가 매 턴 전체 전사를 다시 쓰므로 최종 완전 로그는 루트 `logs/claude-code/`에 남음(코드로 확인). 재발 방지로 셸 cwd를 회사 루트로 고정.
+- Codex E2E의 잔여 리스크는 "최종 report.md 품질" 하나로 축소됨 — 규격·설치·트리거·절차 추적·계산 계층은 전부 검증됨. 쿼터 확보 계정에서 README 4단계 명령 1회 재실행으로 닫을 수 있음.
+
+### 게이트 체크
+- ✅ 제출 전 체크리스트 전 항목 — verification.md §D에 항목별 결과 기재 (구동 검증은 쿼터 한도 내 최대 범위 + 한계 명시)
+- ✅ question.md 자수 확인 결과 기재 — 문서 상단에 544/619/940/717/766 명기
+- ✅ 검증 실행 기록이 세션 로그에 실존 — 체커 정상/예외, marketplace·설치, codex exec 전부 이 세션 Bash 실행 (훅 자동 기록) + logs/codex/ rollout 원본
+
+### 오케스트레이터에게 요청
+1. **Codex E2E 재실행 결정**: 계정 사용 한도로 최종 보고서 생성 미완. 쿼터 있는 계정(해커톤 OpenAI 크레딧 등)에서 README 절차 그대로 1회 실행하면 잔여 리스크가 닫힘 — 실행 시 그 세션 rollout을 `logs/codex/`에 추가할 것.
+2. **스트레이 로그 처리 결정**: `src/skills/haenggan-audit/logs/claude-code/3dd43331-….jsonl` (훅 cwd 부작용, 스테일 스냅샷). 로그 불가침 규칙상 제가 삭제·이동하지 않음 — zip 생성 전 사용자가 처리(권장: 무편집 이동으로 src/ 밖 보관 또는 그대로 포함) 필요.
+3. submission.zip 생성·업로드는 사용자 수행 (드라이런 검증 완료 상태).
