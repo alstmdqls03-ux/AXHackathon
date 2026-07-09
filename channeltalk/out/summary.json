@@ -1,0 +1,12 @@
+{
+  "total": 60,
+  "resolved": 33,
+  "unresolved": 27,
+  "baseline_resolution_rate": 0.55,
+  "resolved_inferred": false,
+  "masked_pii": 0,
+  "skipped_rows": 0,
+  "faq_count": 12,
+  "tickets_file": "src/examples/tickets.csv",
+  "faq_file": "src/examples/faq.csv"
+}
