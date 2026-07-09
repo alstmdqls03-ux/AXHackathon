@@ -166,3 +166,21 @@
 
 ### 오케스트레이터에게 요청
 없음 — 직전 [step-06] 보고의 요청 3건(Codex E2E 재실행 / 스트레이 로그 처리 / zip 생성·업로드)은 여전히 유효.
+
+## [step-06-fix2] 스트레이 로그 이동 처리 — 2026-07-10 00:36
+
+### 한 일
+- 사용자 지시에 따라 스트레이 로그를 **내용 무편집 이동**: `src/skills/haenggan-audit/logs/claude-code/3dd43331-….jsonl` → `logs/stray/claude-code/` (절차: cp → `cmp` byte-identical 확인 → 원위치 제거 → 빈 디렉터리 정리).
+- `logs/stray/README.txt` 추가 — 파일의 출처(훅의 cwd 기준 저장 동작), 무편집 이동 사실, 동일 세션 전체 로그 위치(`logs/claude-code/`)를 심사자용으로 설명.
+- 확인: `src/` 내 로그·logs 디렉터리 잔존 0건 — 플러그인 폴더 청정 상태.
+
+### 핵심 발견과 결정
+- 처리 방식은 [step-06] 보고에서 권장한 "무편집 이동으로 src/ 밖 보관"안 — 로그 내용 불가침 유지(이동만, 편집·발췌·삭제 없음), zip에는 스냅샷과 최종 로그가 모두 포함되어 투명성 극대화.
+
+### 게이트 체크
+- ✅ 로그 내용 무손상 — cmp byte-identical 통과 후에만 원위치 제거
+- ✅ src/ 청정 — jsonl·logs 잔존 0건
+- ✅ 심사자 설명 — logs/stray/README.txt로 출처·경위 명시
+
+### 오케스트레이터에게 요청
+잔여 2건 유효: ① Codex E2E 재실행(쿼터 있는 계정에서 README 절차 1회 — 그 세션 rollout을 logs/codex/에 추가) ② submission.zip 생성·업로드 (드라이런 검증 완료 상태).
