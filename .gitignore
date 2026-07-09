@@ -1,0 +1,6 @@
+# 회사 폴더는 각자 독립 git repo — 루트 repo에서 제외
+channeltalk/
+kakaopay-securities/
+samil-pwc/
+
+.DS_Store
