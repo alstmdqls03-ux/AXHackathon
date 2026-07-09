@@ -254,7 +254,7 @@ def main():
 
     candidates, skipped = [], []
     for h, (fn, required, label) in HYPOTHESES.items():
-        missing = [FILES[k] for k in required if k not in data]
+        missing = [FILES[k] for k in required if k not in data and k not in load_errors]
         broken = [load_errors[k] for k in required if k in load_errors]
         if missing or broken:
             skipped.append({"hypothesis": h, "label": label,

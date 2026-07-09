@@ -9,6 +9,7 @@
 """
 import json
 import sys
+from html import escape
 from pathlib import Path
 
 GAP_TYPES = {
@@ -36,9 +37,23 @@ def load_json(out_dir: Path, name: str, produced_by: str):
         return json.loads(p.read_text(encoding="utf-8"))
     except json.JSONDecodeError as e:
         fail(f"{p} JSON 파싱 실패: {e} — {produced_by} 단계의 출력 형식을 확인해 주세요.")
+    except OSError as e:
+        fail(f"{p} 읽기 실패: {e}")
+
+
+def md_cell(s) -> str:
+    """마크다운 표 셀 안전화: 파이프·줄바꿈이 표를 깨지 않게."""
+    return str(s).replace("|", "\\|").replace("\n", " ")
 
 
 def validate(summary, unresolved, gaps, drafts, sims):
+    if not isinstance(unresolved, list) or any(not isinstance(t, dict) or "ticket_id" not in t or "question" not in t
+                                               for t in unresolved):
+        fail("unresolved.json 형식 오류 — 1(load.py) 단계를 다시 수행해 주세요.")
+    if not isinstance(summary, dict) or not isinstance(summary.get("total"), int) or summary["total"] < 1 \
+            or summary.get("resolved", -1) + summary.get("unresolved", -1) != summary["total"] \
+            or summary.get("unresolved") != len(unresolved):
+        fail("summary.json이 unresolved.json과 맞지 않습니다 — 1(load.py) 단계를 다시 수행해 주세요.")
     ids = {t["ticket_id"] for t in unresolved}
     problems, warnings = [], []
 
@@ -62,6 +77,8 @@ def validate(summary, unresolved, gaps, drafts, sims):
             problems.append(f"{where}: 미해결 로그에 없는 티켓 ID(환각 의심): {bad}")
         if not (g.get("rationale") or "").strip():
             problems.append(f"{where}: rationale(판단 근거)이 비었습니다.")
+        if g.get("cluster") in clusters:
+            problems.append(f"{where}: cluster 이름 중복 — 클러스터명은 고유해야 합니다.")
         clusters[g.get("cluster")] = g
 
     assigned = {t for g in gaps for t in (g.get("evidence_tickets") or [])}
@@ -73,8 +90,12 @@ def validate(summary, unresolved, gaps, drafts, sims):
     if not isinstance(drafts, list):
         problems.append("faq_draft.json은 배열이어야 합니다.")
         drafts = []
+    draft_clusters = set()
     for i, d in enumerate(drafts):
         where = f"faq_draft[{i}]({d.get('cluster', '?')})"
+        if d.get("cluster") in draft_clusters:
+            problems.append(f"{where}: 같은 클러스터에 초안이 중복됩니다.")
+        draft_clusters.add(d.get("cluster"))
         g = clusters.get(d.get("cluster"))
         if g is None:
             problems.append(f"{where}: gaps.json에 없는 클러스터를 참조합니다.")
@@ -161,7 +182,7 @@ def render(out_dir: Path, summary, unresolved, gaps, drafts, sims, warnings, una
     lines += ["", "| 클러스터 | 갭 유형 | confidence | 건수 | 시뮬레이션 해결 | 판단 근거 |",
               "|---|---|---|---|---|---|"]
     for c, t, conf, n, nl, rat in cluster_rows():
-        lines.append(f"| {c} | {GAP_TYPES[t]} | {conf} | {n} | {nl} | {rat} |")
+        lines.append(f"| {md_cell(c)} | {GAP_TYPES[t]} | {conf} | {n} | {nl} | {md_cell(rat)} |")
     if unassigned:
         lines += ["", f"⚠️ 미분류 티켓 {len(unassigned)}건: {', '.join(unassigned)}"]
     for w in warnings:
@@ -177,7 +198,8 @@ def render(out_dir: Path, summary, unresolved, gaps, drafts, sims, warnings, una
         lines.append(f"## {d['cluster']}{marker}")
         lines.append("")
         for q in d["question_variants"]:
-            lines.append(f"- Q. {q}")
+            if (q or "").strip():
+                lines.append(f"- Q. {q}")
         lines.append("")
         lines.append(f"**A.** {d['answer']}")
         basis = d.get("basis_tickets") or []
@@ -204,16 +226,17 @@ def render(out_dir: Path, summary, unresolved, gaps, drafts, sims, warnings, una
              "", sim_note + inferred_note, "", "## 티켓별 판정", "",
              "| 티켓 | 질문 | 판정 | 사유 |", "|---|---|---|---|"]
     for s in sims:
-        lines.append(f"| {s['ticket_id']} | {ids2q[s['ticket_id']]} | {s['verdict']} | {s['reason']} |")
+        lines.append(f"| {md_cell(s['ticket_id'])} | {md_cell(ids2q[s['ticket_id']])} "
+                     f"| {s['verdict']} | {md_cell(s['reason'])} |")
     (out_dir / "validation-report.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
 
     # ---- report.html
     cluster_tr = "".join(
-        f"<tr><td>{c}</td><td>{GAP_TYPES[t]}</td><td>{conf}</td><td>{n}</td><td>{nl}</td></tr>"
+        f"<tr><td>{escape(c)}</td><td>{GAP_TYPES[t]}</td><td>{conf}</td><td>{n}</td><td>{nl}</td></tr>"
         for c, t, conf, n, nl, _ in cluster_rows())
     policy_items = [d["cluster"] for d in drafts if d.get("policy_check")] + \
                    [f"{g['cluster']} ({GAP_TYPES[g['gap_type']]})" for g in gaps if g["gap_type"] not in DRAFTABLE]
-    policy_html = "".join(f"<li>{p}</li>" for p in policy_items) or "<li>없음</li>"
+    policy_html = "".join(f"<li>{escape(p)}</li>" for p in policy_items) or "<li>없음</li>"
     html = f"""<!DOCTYPE html>
 <html lang="ko"><head><meta charset="utf-8"><title>resolution-lift 리포트</title>
 <style>

@@ -27,6 +27,8 @@ FAQ_TEMPLATE = """question,answer
 
 PHONE_RE = re.compile(r"01[016789][-.\s]?\d{3,4}[-.\s]?\d{4}")
 EMAIL_RE = re.compile(r"[\w.+-]+@[\w-]+\.[\w.-]+")
+RRN_RE = re.compile(r"\d{6}[-\s]?[1-4]\d{6}")
+CARD_RE = re.compile(r"\d{4}[-\s]\d{4}[-\s]\d{4}[-\s]\d{4}")
 
 TRUE_VALUES = {"true", "1", "y", "yes", "해결"}
 FALSE_VALUES = {"false", "0", "n", "no", "미해결"}
@@ -38,26 +40,34 @@ def fail(msg: str) -> None:
 
 
 def mask_pii(text: str, counter: dict) -> str:
+    text, n_rrn = RRN_RE.subn("[주민번호 마스킹]", text)
+    text, n_card = CARD_RE.subn("[카드번호 마스킹]", text)
     text, n_phone = PHONE_RE.subn("[전화번호 마스킹]", text)
     text, n_email = EMAIL_RE.subn("[이메일 마스킹]", text)
-    counter["masked"] += n_phone + n_email
+    counter["masked"] += n_phone + n_email + n_rrn + n_card
     return text
 
 
 def read_csv_checked(path: Path, required: list, template: str, label: str) -> list:
     if not path.exists():
         fail(f"{label} 파일이 없습니다: {path}\n필요한 형식:\n{template}")
-    with path.open(newline="", encoding="utf-8-sig") as f:
-        reader = csv.DictReader(f)
-        cols = reader.fieldnames or []
-        missing = [c for c in required if c not in cols]
-        if missing:
-            fail(
-                f"{label}에 필수 컬럼이 없습니다: {', '.join(missing)}\n"
-                f"발견된 컬럼: {', '.join(cols)}\n"
-                f"필요한 형식(템플릿):\n{template}"
-            )
-        return list(reader)
+    try:
+        with path.open(newline="", encoding="utf-8-sig") as f:
+            reader = csv.DictReader(f)
+            cols = reader.fieldnames or []
+            dup = sorted({c for c in cols if cols.count(c) > 1})
+            if dup:
+                fail(f"{label}에 중복 컬럼명이 있습니다: {', '.join(dup)} — 헤더를 확인해 주세요.")
+            missing = [c for c in required if c not in cols]
+            if missing:
+                fail(
+                    f"{label}에 필수 컬럼이 없습니다: {', '.join(missing)}\n"
+                    f"발견된 컬럼: {', '.join(cols)}\n"
+                    f"필요한 형식(템플릿):\n{template}"
+                )
+            return list(reader)
+    except UnicodeDecodeError:
+        fail(f"{label} 파일이 UTF-8이 아닙니다: {path} — 엑셀에서 'CSV UTF-8'로 다시 저장해 주세요.")
 
 
 def parse_resolved(row: dict, has_resolved_col: bool) -> tuple:
@@ -129,7 +139,8 @@ def main() -> None:
         fail(f"유효한 티켓이 0건입니다 (건너뜀 {skipped}건). tickets.csv 내용을 확인해 주세요.\n필요한 형식:\n{TICKETS_TEMPLATE}")
 
     faq = [{"question": r["question"].strip(), "answer": r["answer"].strip()}
-           for r in faq_rows if (r.get("question") or "").strip()]
+           for r in faq_rows
+           if (r.get("question") or "").strip() and (r.get("answer") or "").strip()]
 
     summary = {
         "total": total,
@@ -144,7 +155,10 @@ def main() -> None:
         "faq_file": str(faq_path),
     }
 
-    out_dir.mkdir(parents=True, exist_ok=True)
+    try:
+        out_dir.mkdir(parents=True, exist_ok=True)
+    except (FileExistsError, NotADirectoryError):
+        fail(f"출력 경로가 디렉터리가 아닙니다: {out_dir}")
     (out_dir / "summary.json").write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
     (out_dir / "unresolved.json").write_text(json.dumps(unresolved, ensure_ascii=False, indent=2), encoding="utf-8")
     (out_dir / "faq.json").write_text(json.dumps(faq, ensure_ascii=False, indent=2), encoding="utf-8")
