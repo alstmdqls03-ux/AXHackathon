@@ -28,7 +28,7 @@ FAQ_TEMPLATE = """question,answer
 PHONE_RE = re.compile(r"01[016789][-.\s]?\d{3,4}[-.\s]?\d{4}")
 EMAIL_RE = re.compile(r"[\w.+-]+@[\w-]+\.[\w.-]+")
 RRN_RE = re.compile(r"\d{6}[-\s]?[1-4]\d{6}")
-CARD_RE = re.compile(r"\d{4}[-\s]\d{4}[-\s]\d{4}[-\s]\d{4}")
+CARD_RE = re.compile(r"(?:\d{4}[-\s]?){3}\d{4}")
 
 TRUE_VALUES = {"true", "1", "y", "yes", "해결"}
 FALSE_VALUES = {"false", "0", "n", "no", "미해결"}

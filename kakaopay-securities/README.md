@@ -12,8 +12,27 @@
 
 플러그인 등록 없이 스크립트만으로도 전체 검증이 가능하다(아래 3). Codex에서 스킬로 쓰려면 1–2.
 
-1. `src/`를 `~/.codex/plugins/trade-decision-report/`로 복사 (또는 repo의 `plugins/`)
-2. 로컬 marketplace(`~/.agents/plugins/marketplace.json` 등)에 경로 등록 후 Codex 재시작 → 프롬프트 예: *"테슬라 3주 들고 있는데 파란불이야. samples/trades.csv가 내 거래 내역이고 지금 160달러, 환율 1380원. 나 손해 본 거야? 지금 어떡해?"*
+1. marketplace 루트 폴더를 만들고 이 zip의 `src/` 내용을 복사 (아래 구조·내용 그대로 — Codex CLI 0.142.5에서 검증):
+   ```
+   <marketplace-root>/
+   ├── plugins/trade-decision-report/     ← src/ 내용 복사 (.codex-plugin/plugin.json 포함)
+   └── .agents/plugins/marketplace.json   ← 아래 내용
+   ```
+   ```json
+   {
+     "name": "kakaopay-local",
+     "plugins": [
+       { "name": "trade-decision-report", "source": "./plugins/trade-decision-report" }
+     ]
+   }
+   ```
+2. 등록·설치·확인 (검증된 명령 원문):
+   ```bash
+   codex plugin marketplace add <marketplace-root>        # → Added marketplace `kakaopay-local`
+   codex plugin add trade-decision-report@kakaopay-local  # → Added plugin (Installed plugin root: ~/.codex/plugins/cache/…)
+   codex plugin list                                      # → trade-decision-report@kakaopay-local  installed, enabled  0.1.0
+   ```
+   프롬프트 예: *"테슬라 3주 들고 있는데 파란불이야. samples/trades.csv가 내 거래 내역이고 지금 160달러, 환율 1380원. 나 손해 본 거야? 지금 어떡해?"*
 3. **스크립트 직접 실행** (Python 3 표준 라이브러리만, 외부 의존성 0):
    ```bash
    cd src/skills/trade-decision-report
@@ -50,8 +69,9 @@
 
 ## 검증 (이 폴더 세션에서 실제 실행 — 로그와 정합)
 
-- **정상**: 위 "설치·실행 3" 명령 → `report.md` 생성, 진단 수치 예: 명목 -5.88% vs 원화 실질 -4.90%(환율 효과 +1.05%p), 전량 매도 시 -34,569원 확정, report-id 스탬프 포함.
+- **정상**: 위 "설치·실행 3" 명령 → `report.md` 생성, 진단 수치 예: 명목 -5.88% → USD 실질 -5.95%(매수 수수료 반영) → 원화 실질 -4.90%(환율 효과 +1.05%p), 전량 매도 시 -34,569원 확정, report-id 스탬프 포함.
 - **예외 1 (입력 누락)**: `python3 scripts/diagnose.py samples/trades.csv --fx 1380` → `REQUIRED_INPUT_MISSING` (price가 왜 필요한지 포함), exit 1.
 - **예외 2 (규칙 위반 주입)**: `python3 scripts/render.py samples/diagnosis.json samples/options_violation.json` → `RANKING_LANGUAGE_DETECTED`("가장") + `UNGROUNDED_NUMBER`(-40,000원) 검출, 리포트 미생성, exit 1.
 - **예외 3 (범위 외)**: SELL 행 포함 CSV → `UNSUPPORTED_SCOPE`, exit 1.
-- 문서 규율 자가 검사: `python3 scripts/check_docs.py <폴더>` — 공백 주장 (추정) 표기·납득 프레임 문구 확인.
+- 문서 규율 자가 검사: `python3 scripts/check_docs.py <폴더>` — 공백 주장 (추정) 표기·납득 프레임 문구 확인. `<폴더>`는 zip 루트(이 README.md가 있는 위치).
+- 자동 테스트(E2E 7건, 표준 라이브러리만): zip 루트에서 `python3 -m unittest discover src/tests -v` — 정상 1 + 예외 3 + 스키마·denylist 거부 경로.

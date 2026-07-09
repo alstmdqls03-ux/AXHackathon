@@ -74,11 +74,12 @@ class TestPipeline(unittest.TestCase):
         csvp.write_text(
             'ticket_id,question,resolved,agent_answer\n'
             'T-1,"주민 900101-1234567 이메일 a@b.com",false,'
-            '"카드 1234-5678-9012-3456 연락 010-1234-5678"\n', encoding="utf-8")
+            '"카드 1234-5678-9012-3456 또는 1234567890123456 연락 010-1234-5678"\n', encoding="utf-8")
         r = run(LOAD, csvp, FAQ, "--out", self.tmp / "p")
         self.assertEqual(r.returncode, 0, r.stderr)
         raw = (self.tmp / "p" / "unresolved.json").read_text()
-        for leak in ["900101-1234567", "1234-5678-9012-3456", "010-1234-5678", "a@b.com"]:
+        for leak in ["900101-1234567", "1234-5678-9012-3456", "1234567890123456",
+                     "010-1234-5678", "a@b.com"]:
             self.assertNotIn(leak, raw)
 
     # ---- simulate.py 예외 경로

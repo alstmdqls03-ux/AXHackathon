@@ -35,11 +35,6 @@ FILES = {
     "ar_aging": "ar_aging.csv",
     "cost_allocation": "cost_allocation.csv",
 }
-# 헤더 동의어 (최소한만 — 매핑 실패 시 skip 사유로 보고)
-SYNONYMS = {
-    "차변": ("차변", "차변액", "차변합계"),
-    "대변": ("대변", "대변액", "대변합계"),
-}
 
 
 def read_csv(path):

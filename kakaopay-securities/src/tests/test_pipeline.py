@@ -1,6 +1,6 @@
 """trade-decision-report 파이프라인 E2E 테스트 (블랙박스, CLI 호출).
 
-실행: python3 -m unittest discover tests -v
+실행 (zip 루트에서): python3 -m unittest discover src/tests -v
 표준 라이브러리만 사용 — 프레임워크 설치 불요.
 question.md 문항 5의 정상 1종 + 예외 3종과 정합.
 """
@@ -11,7 +11,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-SKILL = Path(__file__).resolve().parent.parent / "src/skills/trade-decision-report"
+SKILL = Path(__file__).resolve().parent.parent / "skills/trade-decision-report"
 SCRIPTS = SKILL / "scripts"
 SAMPLES = SKILL / "samples"
 

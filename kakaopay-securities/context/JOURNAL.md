@@ -149,3 +149,26 @@
 ### 오케스트레이터에게 요청
 1. **Codex 모델 턴 재검증 여부 결정**: 계정 쿼터가 마감 전 복구되지 않으면 현재 검증 상태로 제출할지, 대체 계정/로컬 모델(ollama 모델 다운로드 ~13GB)로 모델 턴까지 검증할지 판단 필요.
 2. 제출 직전 submission.zip 재생성(로그 최신화) 후 업로드 — zip 생성·업로드는 사용자 수행 사항.
+
+## [step-07] 심사 반영 수정 — 2026-07-10
+
+### 한 일
+- **P0-1 (치명 플래그)**: src/ 안의 잘린 로그 prefix 사본(53,941B — 정식 로그 67,053B의 byte-exact prefix임을 python 대조로 확인)을 무편집 이동 — `logs/stray/claude-code/`로 cp → `cmp` byte-identical 확인 → 원위치 제거 → 빈 디렉터리 정리 → `logs/stray/README.txt`(훅 cwd 부작용 경위 + 정본 위치 + 검증 명령) 생성. 설치 캐시본(~/.codex/plugins/cache/kakaopay-local/…)의 전파 사본도 cmp 후 동일 제거. `find src -name "*.jsonl"` → 0건.
+- **P0-2 (치명 플래그)**: README 검증 시퀀스 전체(정상 diagnose+render, 예외 3종, check_docs)를 이 세션에서 재실행하고 **명령 원문과 핵심 출력(7개 지표 수치, report-id 8d1a510771e6, REQUIRED_INPUT_MISSING/RANKING_LANGUAGE_DETECTED+UNGROUNDED_NUMBER/UNSUPPORTED_SCOPE)을 응답 텍스트에 그대로 인용** — 훅 로그(logs/claude-code/c36bdece-….jsonl)에 1차 증거로 적재됨.
+- **P1**: 문항 2 수치 표현 3건 정정(약 20만 명 / 약 두 배 먼저 / 1,600%에 달했으며). README 설치 1–2단계를 marketplace 루트 구조(`plugins/trade-decision-report` + `.agents/plugins/marketplace.json` 내용 전문) + 실측 명령 3종으로 교체 — 스크래치에 marketplace를 실제 재구성해 `codex plugin marketplace add`→`add`→`list`(installed, enabled 0.1.0) **오늘 재검증** 후 기재(테스트 등록분은 제거).
+- **P2**: 문항 4 "받아들이지 않은 AI 제안"→"후보 비교에서 기각한 대안". README check_docs `<폴더>`=zip 루트 명시. README·문항 5 수익률 병치에 USD 실질 -5.95% 포함(명목 -5.88%→USD 실질 -5.95%→원화 실질 -4.90%). E2E 테스트 7건을 `src/tests/test_pipeline.py`로 zip에 포함(경로 수정 후 7건 OK)하고 README에 실행법 기재.
+
+### 핵심 발견과 결정
+- P2-6은 REVIEW-FIXES가 "src/ 포함 또는 README 한 줄" 중 택일을 허용했으나, tests/가 zip 범위 밖이면 README의 실행법이 심사 환경에서 깨지므로 **src/tests/로 이동 포함**을 선택.
+- 문항 5는 -5.95% 추가로 800자 초과(804) 위험 → 같은 문항 내 압축(예외3 문장 축약 등)으로 **794자** 확보, 사실 주장 불변.
+- 설치 재현성은 문서 전사가 아니라 **오늘 실제 재실행**으로 검증 — marketplace.json 내용이 실측과 일치함을 보장.
+
+### 게이트 체크
+- ✅ logs/ 불가침 — 내용 수정·삭제 0건, 무편집 이동만(cmp 2회 통과 기록)
+- ✅ 자수 재측정 — 694/716/988/682/794 전 문항 제한 내, question.md 하단 표 갱신(2026-07-10)
+- ✅ 회사 간 분리 — 이 폴더와 ~/.codex 캐시(이 플러그인 경로)만 접촉
+- ✅ 회귀 없음 — check_docs 통과, E2E 7건 OK, report-id 8d1a510771e6 재현
+
+### 오케스트레이터에게 요청
+1. 제출 직전 submission.zip 재생성(로그 최신화 + src/tests·logs/stray 포함 확인) 후 업로드.
+2. 출처 URL 7건 오늘 자 접근성 재확인(시크릿 창) — 문항 2 헤더의 확인 일자가 2026-07-09로 남아 있음.
