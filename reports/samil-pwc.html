@@ -1,0 +1,99 @@
+<title>삼일PwC 문제 선정 검토 리포트</title>
+<style>
+body{font-family:'Apple SD Gothic Neo','Noto Sans KR',sans-serif;max-width:900px;margin:2rem auto;padding:0 1.5rem;color:#1a1a2e;line-height:1.65}
+h1{font-size:1.5rem;border-bottom:3px solid #16324f;padding-bottom:.5rem}
+h2{font-size:1.15rem;margin-top:2.2rem;color:#16324f;border-left:4px solid #16324f;padding-left:.6rem}
+h3{font-size:1rem;margin-top:1.4rem}
+.meta{color:#555;font-size:.85rem}
+table{border-collapse:collapse;width:100%;margin:1rem 0;font-size:.9rem}
+th,td{border:1px solid #cdd5df;padding:.45rem .6rem;text-align:left;vertical-align:top}
+th{background:#eef2f7}
+td.num,th.num{text-align:right;white-space:nowrap}
+tr.rec{background:#eafaf0;font-weight:600}
+.badge{display:inline-block;background:#16324f;color:#fff;border-radius:4px;padding:.1rem .5rem;font-size:.78rem;margin-left:.4rem;font-weight:600}
+.card{border:1px solid #cdd5df;border-radius:8px;padding:1rem 1.2rem;margin:1rem 0}
+.card.rec{border-color:#2e9e5b;box-shadow:0 0 0 2px #eafaf0}
+ul{padding-left:1.2rem}
+li{margin:.3rem 0}
+.small{font-size:.85rem;color:#444}
+.warn{background:#fff8e6;border:1px solid #e6c96b;border-radius:8px;padding:.9rem 1.2rem}
+.footer{margin-top:2.5rem;padding-top:1rem;border-top:1px solid #cdd5df;font-size:.85rem;color:#555}
+code{background:#f0f2f5;padding:0 .3rem;border-radius:3px;font-size:.88em}
+</style>
+<h1>삼일PwC — 문제 선정 검토 리포트</h1>
+<p class="meta">생성: 2026-07-09 22:51 · 목적: step-03 문제 선정 승인 전 사용자 검토 · 원문: <code>samil-pwc/context/problem.md</code></p>
+<p class="meta">근거 대장: 근거 대장 S01~S26 총 26건(힌트 1·공식 4·제3자 18·실무자 3) — 2026-07-09 19:40–19:42 curl(브라우저 UA) 전건 HTTP 200 확인, crowe.com 403 건은 금감원 미러(S17)로 대체·제외, pwc.com 계열은 봇 UA 403이라 제3자 백업 병기.</p>
+
+<h2>1. 리서치 요약</h2>
+<ul><li>출제 과제는 &quot;Trusted CEO Agent&quot; — 산재된 기업 데이터를 총망라해 기업의 고민(숨은 문제)을 뽑아내는 에이전트로 출제자(조홍래 파트너, AX Node)가 직접 명명 [S01, 01:32–01:44]</li>
+<li>뽑아낼 것의 예시 3종: ① 틀린 회계처리 ② 현금흐름 문제 ③ 원가배분 왜곡으로 숨은 손실 — 본질은 &quot;데이터의 행간&quot; 읽기 [S01, 01:59–02:13]</li>
+<li>평가 축: 구현보다 기획·의도 최우선, 단순 정리·요약은 &quot;AI 아니어도 가능&quot;으로 감점, 가설→추론→근거의 자연어 제시, SOP에 맞닿은 설명 구조 [S01, 02:16–04:06]</li>
+<li>본선에서 멀티 시스템 합성 데이터 + 의도적으로 심은 문제가 제공될 예정 [S01, 01:46–01:51, 02:58–03:04]</li>
+<li>과제는 회사의 실제 사업 라인과 일치: 2026-01 &quot;AI 기반 경영 인텔리전스 에이전트&quot; 공동개발 협약 [S11], 디지털 솔루션 매출 200억 원(2025-06 결산) [S07] — (추정) 계열 일치는 해석</li>
+<li>공개 실태 근거: 상장사 131사(5.1%)가 매년 감사보고서 정정, 총 379회, 본문 정정 72% [S17, 2022년 통계] + 계속기업 불확실성 &#x27;주의&#x27; 66곳 [S20, 2025 회계연도] + 금감원 감리 표본이 회계오류 수정 회사 우선 [S19]</li>
+<li>&quot;Trusted&quot;의 시장 격차 근거: PwC 29차 CEO Survey — AI 성과(매출+비용) 체감 CEO는 글로벌 12%·한국 14%뿐 [S05·S14]</li>
+<li>출제자가 GPT·Codex를 직접 상용하며 &quot;에이전트 코딩&quot; 언급 — Codex 플러그인 위 실구동 기대 신호 (해석) [S01, 05:18–05:47]</li></ul>
+
+<h2>2. 후보 점수표 <span class="small">(의도 30 / 근거 25 / 임팩트 20 / 플러그인 15 / 데모 10)</span></h2>
+<table>
+<tr><th>후보</th><th class="num">의도 적합성<br><span class="small">/30</span></th><th class="num">공개 근거 강도<br><span class="small">/25</span></th><th class="num">비즈니스 임팩트<br><span class="small">/20</span></th><th class="num">플러그인 적합성<br><span class="small">/15</span></th><th class="num">데모 가능성<br><span class="small">/10</span></th><th class="num">총점<br><span class="small">/100</span></th></tr>
+<tr class="rec"><td>C. 결산 패키지 &quot;행간 감사&quot; 에이전트 (가설 라이브러리 기반 통합) — 추천안 <span class="badge">추천</span></td><td class="num">28</td><td class="num">21</td><td class="num">16</td><td class="num">13</td><td class="num">8</td><td class="num"><b>86</b></td></tr><tr><td>A. 결산 데이터 속 &quot;틀린 회계처리&quot; 사전 탐지</td><td class="num">20</td><td class="num">21</td><td class="num">13</td><td class="num">13</td><td class="num">9</td><td class="num"><b>76</b></td></tr><tr><td>B. 현금흐름 행간의 유동성 위험 조기 경보</td><td class="num">18</td><td class="num">16</td><td class="num">11</td><td class="num">10</td><td class="num">6</td><td class="num"><b>61</b></td></tr>
+</table>
+
+<h2>3. 후보 상세</h2>
+
+<div class="card">
+<h3>후보 A — 결산 데이터 속 &quot;틀린 회계처리&quot; 사전 탐지 <span class="small">(총점 76/100)</span></h3>
+<p>기업 재무팀·결산 담당자(및 검토하는 회계법인)가 결산 시점에 수만 건의 전표·원장·시산표에서 계정 오분류·기간 귀속 오류·비정상 분개를 수작업 표본 검토로만 잡는 상황. 전수 교차 검토는 공수상 불가능해 오류가 공시 후 정정·감리 지적으로야 드러나는 것이 막힘 지점이다.</p>
+<b class="small">핵심 근거</b><ul class="small"><li>출제자의 첫 번째 예시: &quot;틀린 회계 처리를 찾는다도 될 수 있고요&quot; [S01, 01:59–02:01]</li>
+<li>상장사 131사(5.1%)가 매년 감사보고서 정정, 총 379회, 재무제표 본문 정정 72% [S17, 금감원 2022년 통계]</li>
+<li>금감원 감리 표본이 분식위험지표·회계오류 수정 회사 우선 선정 — 사전 자가 점검 수요의 제도적 방증 [S19]</li>
+<li>결산·감사 시즌 과로 이슈 [S23] + 삼일 스스로 반복 업무 연 20만 시간 자동화 [S06]</li></ul>
+<b class="small">Opportunity Sizing</b><p class="small">사후 발견 규모: 131사 ÷ 2,569 상장사 = 5.1%/년 (계산식, S17). 본문 정정 273회(72%)가 결산 단계 교차 검증으로 탐지 가능한 범주라는 것은 (추정). 예방 가치(정정 공시·재감사 공수)는 공개 단가 통계가 없어 수치화하지 않음 (problem.md 명기).</p>
+<b class="small">점수 사유</b><ul class="small"><li>의도 적합성: 출제자의 첫 예시를 정면 커버하나 [01:59], 과제 원문 정의(&quot;산재 데이터 총망라&quot; [01:36])의 예시 3종 중 1종만 — 과제의 부분집합</li>
+<li>공개 근거 강도: 금감원 원자료 미러(S17)+감리 계획(S19)로 후보 중 가장 단단한 단일 통계, 전건 URL 200 검증</li>
+<li>비즈니스 임팩트: 131사/년으로 풀은 명확하나 예방 가치의 정량화 부재(문서 스스로 &quot;수치화하지 않음&quot;), 회사 매출 라인 연결이 C보다 약함</li>
+<li>플러그인 적합성: ~2주 결산 검토 슬라이스에 부합, 합성 데이터 설계 최용이, 마감 리스크 최소 — 다만 단일 유형 체커로 좁아짐</li>
+<li>데모 가능성: 전표 ID·계정 단위 근거 인용이 세 후보 중 가장 선명 — 심사자 입력→출력 확인 최적</li></ul>
+</div>
+<div class="card">
+<h3>후보 B — 현금흐름 행간의 유동성 위험 조기 경보 <span class="small">(총점 61/100)</span></h3>
+<p>CEO·이사회가 손익 중심 보고만 받는 상황에서, 손익은 흑자인데 영업현금흐름·운전자본(채권 회수·재고 회전·만기 구조)이 악화되는 신호가 어느 시스템에도 한 화면으로 존재하지 않는 것이 막힘 지점. 계속기업 리스크가 감사보고서 강조사항으로 붙고서야 인지된다.</p>
+<b class="small">핵심 근거</b><ul class="small"><li>출제자의 두 번째 예시: &quot;현금 흐름상에 뭔가 문제점을 찾는다일 수도 있고요&quot; [S01, 02:01–02:03]</li>
+<li>2025 회계연도 상장사 2,702곳 중 계속기업 불확실성 &#x27;주의&#x27; 66곳(2.4%) [S20]</li>
+<li>CEO의 AI 성과·신뢰 체감 12~14% — 경영진용 신호 탐지의 신뢰 격차 [S05·S14]</li></ul>
+<b class="small">Opportunity Sizing</b><p class="small">경보 대상 풀: 상장사만 66곳/년 (계산식 66÷2,702=2.4%, S20). 비상장 포함 시 수 배는 (추정)이며 공개 통계 미확보로 수치 주장하지 않음. 조기 경보 1건의 가치도 정량화 불가로 수치 주장하지 않음 (problem.md 명기).</p>
+<b class="small">점수 사유</b><ul class="small"><li>의도 적합성: 예시 1/3 커버에 그치고, 판단이 거시적이어서 출제자가 강조한 &quot;근거를 자연어로 제시&quot; [02:41–02:45] 시연과의 정합이 A·C보다 약함</li>
+<li>공개 근거 강도: 핵심 통계가 보도 1건(S20) 의존, S17·S19 같은 원자료급 뒷받침 부재 — 사실/추정 표기는 준수</li>
+<li>비즈니스 임팩트: 66곳/년으로 풀이 가장 작고, 경보 가치·비상장 확장 모두 정량화 포기 상태</li>
+<li>플러그인 적합성: 시계열 합성 데이터 필요 + &quot;근거=특정 전표&quot;식 인용이 어려워 problem.md 스스로 △ 판정 — 2주 슬라이스 자체는 성립</li>
+<li>데모 가능성: 거시 판단이라 심사자가 입력→출력의 인과를 눈으로 확인하기 어려움 (문서 자체 평가 &#x27;중&#x27;)</li></ul>
+</div>
+<div class="card rec">
+<h3>후보 C — 결산 패키지 &quot;행간 감사&quot; 에이전트 (가설 라이브러리 기반 통합) — 추천안 <span class="badge">추천</span> <span class="small">(총점 86/100)</span></h3>
+<p>CEO가 ERP·회계·판매·자금 등 시스템별 보고는 다 받지만, 시스템·계정·기간을 가로질러 교차 대조해야만 보이는 문제(틀린 회계처리 / 손익-현금흐름 괴리 / 원가배분 왜곡)는 개별 숫자가 전부 정상처럼 보여 아무도 못 읽는 상황. 사람이 하려면 회계사급 전문가의 수 주간 전수 교차 검토가 필요해 실제로는 사후(정정 공시·감리 지적)에야 드러난다.</p>
+<b class="small">핵심 근거</b><ul class="small"><li>과제 원문 정의 그 자체: &quot;산재되어 있는 데이터들을 총망라해서 기업의 고민을 뽑아내는 에이전트&quot; [S01, 01:36–01:44] + &quot;데이터의 행간&quot; [S01, 02:08–02:13]</li>
+<li>예시 3종이 한 문장 흐름에서 병렬 열거됨(&quot;~도 될 수 있고요/~일 수도 있고요&quot;) [S01, 01:59–02:08] — 세 증상 통합이 과제 실체라는 해석의 근거</li>
+<li>사후 발견 실태: 정정 131사(5.1%)/년 [S17] + 계속기업 주의 66곳 [S20] + 감리 표본 기준 [S19]</li>
+<li>회사가 같은 카테고리에 실제 투자: &quot;AI 기반 경영 인텔리전스 에이전트&quot; 협약 [S11] + AX Node·Node Studio [S02]</li></ul>
+<b class="small">Opportunity Sizing</b><p class="small">수요 풀: 정정 131사 + 계속기업 주의 66곳 ≈ 상장사만 연 ~200개사가 &quot;행간을 못 읽어 사후 발견&quot;의 직접 당사자 (계산식 131+66, 중복 가능성으로 (추정) 상한 표기, S17·S20). 카테고리 실증: 삼일 디지털 솔루션 매출 200억 원 [S07]. 신뢰 격차: CEO AI 성과 체감 12~14% [S05·S14].</p>
+<b class="small">점수 사유</b><ul class="small"><li>의도 적합성: 과제 원문 정의(단수 에이전트 &quot;Trusted CEO Agent&quot;)와 예시 3종 전부를 커버하고 [01:32–02:13], 평가 축(기획&gt;구현·가설→추론→근거·SOP 구조)을 가설 라이브러리 설계로 정면 시연 — 다만 &quot;3종=한 과제&quot;는 【해석】 의존이라 만점 아님</li>
+<li>공개 근거 강도: S17+S19+S20+S11 결합으로 폭은 최광이나, 핵심 sizing(131+66)이 서로 다른 연도 통계의 합산이고 원가배분 왜곡(예시 ③)에는 직접 공개 근거가 없음</li>
+<li>비즈니스 임팩트: ~200개사/년 + 회사 실매출 라인(200억) 연결이 세 후보 중 유일하게 사업맥락과 직결 — 건당 가치 정량화는 여전히 부재</li>
+<li>플러그인 적합성: 가설 라이브러리+교차 대조 절차+SOP 리포트를 SKILL.md로 제공하고 추론은 Codex가 수행하는 구조가 형태에 정합, 비밀키·외부 인프라 불요 — 마감(7/10) 리스크는 A보다 크고 스코프 가드(가설군당 심은 문제 1~2개)로 통제 전제</li>
+<li>데모 가능성: 가설군별 전표/계정 인용으로 A에 준하는 선명도 가능하나, 3개 가설군 합성 데이터를 하루 안에 설계해야 하는 데모 복잡도가 감점</li></ul>
+</div>
+
+<h2>4. 추천</h2>
+<div class="card rec"><b>후보 C</b><p>출제자가 과제를 단수의 &quot;Trusted CEO Agent&quot;로 명명하고 예시 3종을 병렬 열거한 이상 [S01, 01:32–02:13], 하나만 풀면 부분집합이고 셋을 가설군으로 품으면 과제 그 자체다. 평가 축(기획·의도 &gt; 구현, 가설→추론→근거 자연어 제시, SOP 설명 구조)을 가설 라이브러리 설계로 가장 정면으로 시연하며, A·B의 근거·데모 강점을 가설군 1·2로 그대로 흡수한다. 본선 합성 데이터에 무수정 재사용 가능하고 회사의 실매출 라인(디지털 솔루션 200억, 경영 인텔리전스 에이전트 협약 [S07·S11])과 직결된다. 총점 86 &gt; A 76 &gt; B 61.</p></div>
+
+<h2>5. 승인 전 검증 포인트 (사용자 확인 필요)</h2>
+<div class="warn"><ul><li>&quot;예시 3종 = 한 과제의 세 증상&quot;은 【해석】이다 (intent.md 2-7) — C 추천의 핵심 전제이므로 원 영상 [01:32–02:13] 구간을 직접 보고 통합형이 맞는지, 아니면 하나를 깊게 파는 것을 원하는지 판단 필요. 통합이 오독이면 A가 안전한 차선.</li>
+<li>C의 sizing &quot;~200개사/년&quot;은 2022년 정정 통계(S17)와 2025 회계연도 계속기업 통계(S20)라는 서로 다른 연도·모집단의 단순 합산 (추정 상한 표기됨) — 심사 질의에 방어 가능한 수준인지 확인 필요.</li>
+<li>예시 ③ 원가배분 왜곡(숨은 손실 제품)에는 직접적인 공개 통계 근거가 대장에 없음 — C의 세 가설군 중 하나가 힌트 영상 발언 [S01, 02:03–02:08] 외 근거 공백. 감수하거나 추가 리서치 여부 결정 필요.</li>
+<li>마감이 내일(2026-07-10 23:59)인데 C는 3개 가설군 합성 데이터+플러그인+로그 정합까지 요구 — 스코프 가드(가설군당 심은 문제 1~2개)가 실제로 지켜지는지, 미달 시 A로 축소하는 폴백 기준을 승인 시점에 정해 둘 것.</li>
+<li>pwc.com 계열 출처(S02~S05)는 봇 UA 403 — AI 심사자가 접근 실패할 수 있어 백업 출처(S06·S07·S14) 병기가 유지되는지 question.md 작성 시 확인.</li>
+<li>S17은 2022년 통계(4년 전)의 KDI 미러 — 더 최신 연도의 감사보고서 정정 통계가 공개돼 있다면 교체가 설득력을 높임.</li></ul></div>
+
+<div class="footer">피드백 방법: 오케스트레이터 채팅에 "삼일PwC C 승인" / "후보 X로 변경" / 구체 피드백을 남기면 해당 pane에 반영됩니다.
+모든 점수·요약은 해당 회사 폴더의 context/ 산출물(intent·company·sources·problem)만을 근거로 산정됨.</div>

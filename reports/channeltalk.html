@@ -1,0 +1,99 @@
+<title>채널톡 문제 선정 검토 리포트</title>
+<style>
+body{font-family:'Apple SD Gothic Neo','Noto Sans KR',sans-serif;max-width:900px;margin:2rem auto;padding:0 1.5rem;color:#1a1a2e;line-height:1.65}
+h1{font-size:1.5rem;border-bottom:3px solid #16324f;padding-bottom:.5rem}
+h2{font-size:1.15rem;margin-top:2.2rem;color:#16324f;border-left:4px solid #16324f;padding-left:.6rem}
+h3{font-size:1rem;margin-top:1.4rem}
+.meta{color:#555;font-size:.85rem}
+table{border-collapse:collapse;width:100%;margin:1rem 0;font-size:.9rem}
+th,td{border:1px solid #cdd5df;padding:.45rem .6rem;text-align:left;vertical-align:top}
+th{background:#eef2f7}
+td.num,th.num{text-align:right;white-space:nowrap}
+tr.rec{background:#eafaf0;font-weight:600}
+.badge{display:inline-block;background:#16324f;color:#fff;border-radius:4px;padding:.1rem .5rem;font-size:.78rem;margin-left:.4rem;font-weight:600}
+.card{border:1px solid #cdd5df;border-radius:8px;padding:1rem 1.2rem;margin:1rem 0}
+.card.rec{border-color:#2e9e5b;box-shadow:0 0 0 2px #eafaf0}
+ul{padding-left:1.2rem}
+li{margin:.3rem 0}
+.small{font-size:.85rem;color:#444}
+.warn{background:#fff8e6;border:1px solid #e6c96b;border-radius:8px;padding:.9rem 1.2rem}
+.footer{margin-top:2.5rem;padding-top:1rem;border-top:1px solid #cdd5df;font-size:.85rem;color:#555}
+code{background:#f0f2f5;padding:0 .3rem;border-radius:3px;font-size:.88em}
+</style>
+<h1>채널톡 — 문제 선정 검토 리포트</h1>
+<p class="meta">생성: 2026-07-09 22:51 · 목적: step-03 문제 선정 승인 전 사용자 검토 · 원문: <code>channeltalk/context/problem.md</code></p>
+<p class="meta">근거 대장: 근거 대장 E01–E40 총 40건(힌트영상 9·공식 17·제3자 8·유저 1·파생추정 5) — 전 URL 무로그인 200 확인(2026-07-09 19:40–19:50 KST 23건 + E40 22:15 KST; E25는 302 경유 후 200·본문 열람 별도 확인)</p>
+
+<h2>1. 리서치 요약</h2>
+<ul><li>출제자(이경훈 CSO)가 영상에서 유일하게 명시한 현재 문제는 &quot;이커머스 고객사의 상담 문제&quot;이며 AI 에이전트(ALF)로 해결 중 [E02, 01:28]</li>
+<li>출제자가 평가 질문을 직접 발화: &quot;왜 이 문제/이 툴을 골랐는가&quot; + 툴 종류 무관, 프롬프팅·접근·판단을 본다 [E03, 01:34–02:24]; 사내 개발자 만족도 1위 툴 = Codex [E07, 04:03]</li>
+<li>ALF는 3,000여 기업·누적 650만 건 상담 처리(2026-05) [E14]; 공개 해결률은 55~80% 스펙트럼(라룸 55%[E25], 안다르 61%[E15], 베타 최고 80%[E12]) → 미해결 20~45% 상시 존재 [E35(추정·파생)]</li>
+<li>ALF는 이전 상담을 학습하지 않고 등록된 FAQ·도큐먼트 기반으로만 답변 — 지식 보강이 해결률 개선의 유일한 공개 경로이며 수작업 [E17]; 최상 조건에서도 FAQ 65개 등록에 2.5시간 [E16]</li>
+<li>신규 온보딩은 회사가 &#x27;AI 상담 시뮬레이션&#x27;(2026-05-27, 웹 크롤링+RAG)으로 이미 자동화 착수 [E13] — 반면 도입 후 개선 사이클 자동화 발표는 공개 검색 미발견 [E36(추정)]</li>
+<li>산업 지형: Salesforce의 Fin 36억 달러 인수(2026-06) 등 AI CS 에이전트 경쟁 격화 [E31], 경쟁 지표가 해결률로 수렴 중 [E37(추정)]</li>
+<li>장바구니 이탈 시나리오는 출제자가 직접 언급했으나 &quot;상담 이외&quot; 확장 예시 위계 [E05, 03:27–03:47]; 관련 채널톡 측 공개 수치는 대장에 없음(일반 통계 E40뿐)</li></ul>
+
+<h2>2. 후보 점수표 <span class="small">(의도 30 / 근거 25 / 임팩트 20 / 플러그인 15 / 데모 10)</span></h2>
+<table>
+<tr><th>후보</th><th class="num">의도 적합성<br><span class="small">/30</span></th><th class="num">공개 근거 강도<br><span class="small">/25</span></th><th class="num">비즈니스 임팩트<br><span class="small">/20</span></th><th class="num">플러그인 적합성<br><span class="small">/15</span></th><th class="num">데모 가능성<br><span class="small">/10</span></th><th class="num">총점<br><span class="small">/100</span></th></tr>
+<tr class="rec"><td>A. ALF 해결률 갭: 미해결 상담 → 지식 보강 사이클 자동화 <span class="badge">추천</span></td><td class="num">28</td><td class="num">20</td><td class="num">16</td><td class="num">14</td><td class="num">9</td><td class="num"><b>87</b></td></tr><tr><td>B. 신규 고객사 ALF 온보딩(지식 초기 구축) 자동화</td><td class="num">18</td><td class="num">15</td><td class="num">10</td><td class="num">10</td><td class="num">9</td><td class="num"><b>62</b></td></tr><tr><td>C. 장바구니 이탈 고객 AI 아웃바운드 리커버리 설계</td><td class="num">15</td><td class="num">8</td><td class="num">8</td><td class="num">5</td><td class="num">3</td><td class="num"><b>39</b></td></tr>
+</table>
+
+<h2>3. 후보 상세</h2>
+
+<div class="card rec">
+<h3>후보 A — ALF 해결률 갭: 미해결 상담 → 지식 보강 사이클 자동화 <span class="badge">추천</span> <span class="small">(총점 87/100)</span></h3>
+<p>이커머스 고객사 CX 담당자(1~4명 소규모 팀)와 3,000여 고객사를 반복 지원하는 채널톡 AX 컨설턴트가, ALF 도입 후에도 남는 미해결 상담 20~45%(공개 해결률 55~80%의 여집합)를 줄이려 할 때 막힌다. 미해결 로그 수천 건을 사람이 읽고 분류→지식 갭 도출→FAQ/규칙 작성→검증하는 전 과정이 수작업이며, ALF는 등록된 지식 기반으로만 답하므로(E17) 지식 보강이 해결률을 올리는 유일한 공개 경로다.</p>
+<b class="small">핵심 근거</b><ul class="small"><li>출제자가 유일하게 명시한 현재 문제 = &quot;이커머스 고객사의 상담 문제&quot; [E02, 01:28] + &quot;AI가 작업은 다 해주고 사람이 하는 건 생각&quot; [E03, 02:16]</li>
+<li>공개 해결률 스펙트럼 55~80%: 안다르 61%[E15], 베타 최고 80%[E12], 라룸 배송문의 55%[E25] → 미해결 20~45% 상시 존재[E35(추정·파생)]</li>
+<li>ALF는 이전 상담을 학습하지 않고 등록 지식으로만 답변 — FAQ 품질이 답변 품질 좌우(공식 가이드)[E17]; 최상 조건에서도 FAQ 65개 등록 2.5시간[E16]</li>
+<li>이 개선 사이클의 자동화 발표는 공개 검색 미발견[E36(추정, 부재 증명 아님)]; &quot;수천~수만 기업 문제 풀기 = AX 컨설턴트의 일&quot; [E06, 03:47]과 반복 구조 일치</li></ul>
+<b class="small">Opportunity Sizing</b><p class="small">누적 상담 650만 건[E14] × 미해결률 20~45%[E35(추정: E12·E15·E25 여집합)] ≈ 130만~293만 건. 고객사당: 자란다급 일 1,500건[E20] 기준 미해결 일 300~675건 → 월 ~9,000~20,000건(추정). 노동 단가: FAQ 65개=2.5h[E16]는 최상 조건 하한 → 로그 분석·갭 도출·검증 포함 1고객사 1사이클 ≈ 사람 ~2주(추정). 반복 배수: ALF 고객사 3,000여 개[E14] 각자 상시 반복.</p>
+<b class="small">점수 사유</b><ul class="small"><li>의도 적합성: 명시된 유일한 현재 문제[01:28]의 성과 지표(해결률)를 직접 개선 + &quot;생각&quot; 노동[02:16] 대체 + 반복 스케일[03:47] — 다만 &#x27;개선 사이클&#x27; 자체는 영상에 직접 언급 없는 해석이라 -2</li>
+<li>공개 근거 강도: 해결률 사례 3건 + 공식 가이드[E17]·세팅 단가[E16]로 두터우나, 핵심 수치(미해결 20~45%)가 파생 추정[E35]이고 자동화 공백[E36]은 부재 증명 아님, 사례는 자사 블로그 편향[E39] — -5</li>
+<li>비즈니스 임팩트: 130만~293만 건 규모 + 산업이 해결률 경쟁으로 수렴[E31, E37(추정)]과 정합 — 단 금액 환산 근거 없음, 사이클당 ~2주도 추정이라 -4</li>
+<li>플러그인 적합성: 파일 입출력 완결, 외부 API·비밀키 불요, 분류→갭→생성→검증 4단계가 SKILL.md 구조에 맞음 — ~2주 스코프가 추정 기반이라 -1</li>
+<li>데모 가능성: 입력(로그 CSV+FAQ)→출력(갭 리포트+FAQ 초안+재시뮬레이션 리포트) 심사자 직접 구동 가능, 합성 데이터로 정상·예외 시연 가능 — 재시뮬레이션이 실제 ALF 아닌 근사라 -1</li></ul>
+</div>
+<div class="card">
+<h3>후보 B — 신규 고객사 ALF 온보딩(지식 초기 구축) 자동화 <span class="small">(총점 62/100)</span></h3>
+<p>ALF를 새로 도입하는 이커머스 고객사와 온보딩을 돕는 채널톡 측이, 사이트·정책 문서·기존 상담 내역에 흩어진 정보를 Knowledge/Rules/Tasks[E10]로 수작업 정리해야 하는 단계에서 막힌다. 최상 조건에서도 FAQ 65개=2.5시간[E16], 자료 비정리 고객사는 그 몇 배(추정).</p>
+<b class="small">핵심 근거</b><ul class="small"><li>같은 도메인(&quot;이커머스 고객사의 상담 문제&quot;[E02, 01:28])의 진입 단계</li>
+<li>세팅 노동 단가: 베리시 FAQ 65개 등록 2.5시간(사전 정리 자료 기준)[E16]; FAQ 품질이 답변 품질 좌우[E17]</li>
+<li>신규 도입 증가세: 2,000개사(2025-11)[E11] → 3,000개사(2026-05)[E14]</li>
+<li>치명 감점: 채널톡이 &#x27;AI 상담 시뮬레이션&#x27;(2026-05-27, 웹 크롤링+RAG 자동 지식화)[E13]으로 이미 자동화 착수한 정면 영역</li></ul>
+<b class="small">Opportunity Sizing</b><p class="small">신규 도입 +1,000개사/6개월(E11→E14) = 월 ~167개사 신보딩(추정: 균등 분포 가정) × 개사당 수 시간~수 일[E16 하한 + 자료 비정리 가중(추정)] — 개사당 단위가 작아 1회성 소형 업무.</p>
+<b class="small">점수 사유</b><ul class="small"><li>의도 적합성: 명시 도메인[01:28] 내부이나, 회사가 이미 착수한 영역[E13]이라 출제자의 직접 평가 질문 &quot;왜 이 문제를 골랐는가&quot;[E03, 01:36]에 답이 궁색 — 큰 감점</li>
+<li>공개 근거 강도: 세팅 노동 사례가 사실상 1건[E16]으로 표본 얇음, E13 중복 증거는 오히려 반대 방향으로 작용</li>
+<li>비즈니스 임팩트: 월 ~167개사(추정)는 있으나 개사당 수 시간~수 일로 단위 노동이 작고 1회성 — &#x27;2주 업무&#x27; 규모 미달</li>
+<li>플러그인 적합성: 파일 입출력 데모는 A와 동일하게 가능하나, ~2주 스코프 기준에 못 미치는 소형 과제(problem.md 비교표 △)</li>
+<li>데모 가능성: 파일 입출력 완결로 A와 동급 — 재현 가능</li></ul>
+</div>
+<div class="card">
+<h3>후보 C — 장바구니 이탈 고객 AI 아웃바운드 리커버리 설계 <span class="small">(총점 39/100)</span></h3>
+<p>이커머스 운영자(마케팅/CRM 담당)가 평균 70.22%의 장바구니 이탈[E40]에 대해 회수 액션(이탈 사유 인터뷰, 쿠폰 유도)을 하려 할 때, 이탈 사유 파악과 개인화 리커버리 캠페인 설계·실행이 수작업이라 막힌다.</p>
+<b class="small">핵심 근거</b><ul class="small"><li>출제자가 직접 그린 시나리오: &quot;&#x27;장바구니 이탈한 고객 알려줘&#x27;라고 하면 바로 AI가 전화를 걸어 인터뷰… 쿠폰으로 구매 유도&quot;[E05, 03:27]</li>
+<li>단, 같은 발언에서 &quot;상담 **이외에** 있는… 문제들&quot;[E05, 03:40] — 상담이 본진이고 이것은 확장 예시라는 위계(해석 I5)</li>
+<li>이커머스 평균 장바구니 이탈률 70.22%(Baymard)[E40] — 채널톡 측 수치 아닌 일반 통계</li>
+<li>채널톡의 고객 접점 통합(채팅+전화+CRM) 자산[E18]이 시나리오의 기반</li></ul>
+<b class="small">Opportunity Sizing</b><p class="small">이탈률 70.22%[E40]로 모수는 크나, 회수율·건당 가치에 대한 채널톡 측 공개 수치가 대장에 없어 기대 효과 정량화 불가(problem.md가 추정 불가를 명시).</p>
+<b class="small">점수 사유</b><ul class="small"><li>의도 적합성: 출제자가 직접 그린 시나리오[03:27]인 점은 유효하나, 영상 위계상 &quot;상담 이외&quot; 확장 예시이고 명시된 현재 문제[01:28]가 아님 — 절반 수준</li>
+<li>공개 근거 강도: 채널톡 측 수치 전무, 일반 통계 1건[E40]에만 의존 — 대장에서 가장 얇은 근거</li>
+<li>비즈니스 임팩트: 모수는 크지만 회수율·건당 가치 부재로 정량화 불가가 명시됨 — sizing 실패는 낮은 점수</li>
+<li>플러그인 적합성: AI 전화 아웃바운드는 전화 인프라·고객 DB 의존 — Codex 플러그인 단독으로는 스크립트 생성까지만 가능, 핵심 가치를 플러그인이 담지 못함</li>
+<li>데모 가능성: &#x27;실행&#x27;을 시연할 수 없고 산출물이 설계 문서/스크립트에 그침 — 입력→출력 데모가 반쪽</li></ul>
+</div>
+
+<h2>4. 추천</h2>
+<div class="card rec"><b>후보 A</b><p>출제자가 영상에서 유일하게 명시한 현재 문제(&quot;이커머스 고객사의 상담 문제&quot;[01:28])의 성과 지표인 해결률을 직접 움직이는 병목이며, 공개 수치(해결률 55~80%→미해결 20~45%[E12,E15,E25,E35])로 문제가 입증되고, 회사가 아직 자동화를 발표하지 않은 공백[E36]이고, 3,000개 고객사마다 반복되는 구조[03:47]라 스케일이 있다. 파일 입출력 완결 파이프라인으로 비밀키·외부 인프라 없이 Codex 플러그인 단독 데모가 가능하며, 분류·갭·생성·검증 단계별 프롬프트 설계가 그대로 드러나 &quot;프롬프팅·접근·판단을 본다&quot;[02:12] 평가 관점과도 정합. 총점 87로 B(62)·C(39) 대비 전 축 우위.</p></div>
+
+<h2>5. 승인 전 검증 포인트 (사용자 확인 필요)</h2>
+<div class="warn"><ul><li>핵심 수치 &#x27;미해결 20~45%&#x27;는 파생 추정[E35] — 공개 사례 3건(E12·E15·E25)의 산술 여집합일 뿐 전체 3,000개사 평균이 아니며, 80%는 비공개 베타 1건의 최고치다. 원문 3건을 직접 열람해 인용 맥락 확인 권장</li>
+<li>&#x27;1고객사 1사이클 ≈ 사람 ~2주&#x27;는 E16(사전 정리된 자료로 FAQ 65개=2.5시간)에서의 외삽 추정 — 로그 분석·갭 도출·검증 시간의 직접 공개 수치는 대장에 없다. 문항 서술 시 추정임을 유지해야 함</li>
+<li>E36 &#x27;자동화 발표 미발견&#x27;은 부재 증명이 아님 — 채널톡이 내부 개발 중이거나 마감(7/10) 전 발표할 수 있다. 제출 직전 재검색 권장</li>
+<li>해결률 사례는 전부 채널톡 자사 블로그/보도자료로 성공담 선별 편향[E39] — 수치를 &#x27;문제 존재의 증거&#x27;로만 쓰는 규칙이 question.md 초안까지 유지되는지 확인</li>
+<li>플러그인의 &#x27;재시뮬레이션 검증&#x27; 단계는 실제 ALF가 아닌 LLM 근사 — &quot;해결률이 얼마나 오르는가&quot; 리포트가 실제 ALF 동작을 보장하지 못한다는 한계를 데모·문항에서 어떻게 정직하게 표기할지 결정 필요</li>
+<li>힌트 영상 인용은 자동자막 보정본 기반[E38] — 핵심 인용([01:28] &#x27;이커머스 고객사의 상담 문제&#x27;, [03:40] &#x27;상담 이외에&#x27;)은 승인 전 영상 원본에서 직접 확인 권장</li></ul></div>
+
+<div class="footer">피드백 방법: 오케스트레이터 채팅에 "채널톡 A 승인" / "후보 X로 변경" / 구체 피드백을 남기면 해당 pane에 반영됩니다.
+모든 점수·요약은 해당 회사 폴더의 context/ 산출물(intent·company·sources·problem)만을 근거로 산정됨.</div>
