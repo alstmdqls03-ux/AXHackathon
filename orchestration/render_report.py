@@ -84,7 +84,11 @@ def render(key, d):
 <b class="small">점수 사유</b><ul class="small">{lis(c["score_rationale"])}</ul>
 </div>""")
 
-    body = f"""<title>{esc(disp)} 문제 선정 검토 리포트</title>
+    body = f"""<!DOCTYPE html>
+<html lang="ko">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{esc(disp)} 문제 선정 검토 리포트</title>
 <style>{CSS}</style>
 <h1>{esc(disp)} — 문제 선정 검토 리포트</h1>
 <p class="meta">생성: {now} · 목적: step-03 문제 선정 승인 전 사용자 검토 · 원문: <code>{esc(key if key in ('channeltalk','samil-pwc','kakaopay-securities') else fname.replace('.html',''))}/context/problem.md</code></p>
