@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8"><title>resolution-lift 리포트</title>
+<style>
+body{font-family:'Apple SD Gothic Neo',sans-serif;max-width:860px;margin:2rem auto;padding:0 1rem;color:#222}
+h1{font-size:1.4rem} .row{display:flex;align-items:center;margin:.5rem 0}
+.lbl{width:180px;font-size:.9rem} .track{flex:1;background:#eee;border-radius:4px}
+.fill{color:#fff;padding:.35rem .5rem;border-radius:4px;font-size:.85rem;white-space:nowrap}
+table{border-collapse:collapse;width:100%;margin:1rem 0;font-size:.9rem}
+td,th{border:1px solid #ddd;padding:.4rem .6rem;text-align:left} th{background:#f7f7f7}
+.note{color:#666;font-size:.85rem}
+</style></head><body>
+<h1>resolution-lift — AI 상담 해결률 개선 리포트</h1>
+<p>총 60건 / 미해결 27건 / 갭 클러스터 7개 / FAQ 초안 4건</p>
+<div class="row"><span class="lbl">기준(현행 지식)</span><div class="track"><div class="fill" style="width:55.0%;background:#8a8a8a">55.0%</div></div></div>
+<div class="row"><span class="lbl">초안 반영 시뮬레이션</span><div class="track"><div class="fill" style="width:85.0%;background:#2f7d4f">85.0%</div></div></div>
+<p><b>상승분 +18건 (+30.0%p)</b> · '부분' 5건은 미해결로 집계</p>
+<h2>갭 클러스터</h2>
+<table><tr><th>클러스터</th><th>갭 유형</th><th>confidence</th><th>건수</th><th>시뮬레이션 해결</th></tr><tr><td>상품 케어(세탁·보관)</td><td>A 지식 부재</td><td>높음</td><td>9</td><td>9</td></tr><tr><td>쿠폰 적용 제외·조건</td><td>B 지식 불명확</td><td>높음</td><td>7</td><td>4</td></tr><tr><td>해외 배송·반품·관세</td><td>B 지식 불명확</td><td>높음</td><td>4</td><td>4</td></tr><tr><td>환불 계좌 안내·제한</td><td>A 지식 부재</td><td>중간</td><td>2</td><td>1</td></tr><tr><td>환불 계좌 변경·등록 처리</td><td>D 태스크 필요</td><td>중간</td><td>2</td><td>0</td></tr><tr><td>제휴·특수 할인 정책</td><td>C 정책 결정 필요</td><td>중간</td><td>2</td><td>0</td></tr><tr><td>감정 표현·문의 맥락 부족</td><td>사람 검토 필요</td><td>중간</td><td>1</td><td>0</td></tr></table>
+<h2>사람 확인이 필요한 항목</h2><ul><li>환불 계좌 변경·등록 처리 (D 태스크 필요)</li><li>제휴·특수 할인 정책 (C 정책 결정 필요)</li><li>감정 표현·문의 맥락 부족 (사람 검토 필요)</li></ul>
+<p class="note">※ 본 수치는 입력 로그에 대한 LLM 재시뮬레이션 판정값이며, 실제 해결률은 초안 반영·운영 후 측정해야 한다. '부분' 판정은 보수적으로 미해결로 집계.</p>
+</body></html>

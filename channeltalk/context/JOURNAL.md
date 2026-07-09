@@ -127,3 +127,27 @@
 
 ### 오케스트레이터에게 요청
 없음 (전체 사이클 통합 검증 — LLM 단계 포함 정상 1 + 예외 — 은 step-06에서 수행 예정, 검증 계획은 plan.md에 기재)
+
+## [step-06] 검증 + 제출 준비 — 2026-07-09 23:45
+
+### 한 일
+- **직접 구동 검증(심사자 절차)**: 로컬 marketplace 구성 → `codex plugin marketplace add`(ax-local) → `codex plugin add resolution-lift@ax-local` 설치 → `codex exec`로 정상 시나리오 실행. Codex(LLM)가 스킬 절차대로 1~4단계 산출물 생성: 미해결 27건 → 7클러스터 분류(gaps.json) → A·B에만 초안 4건(faq_draft.json) → 전건 채점(simulation.json). Codex 무료 사용량 한도가 마지막 결정적 단계 직전에 도달 → `simulate.py`를 이 세션에서 직접 실행해 완결(LLM 단계는 전부 Codex가 수행). **결과: 해결률 55.0% → 85.0% (+18건, 시뮬레이션 판정)**, C/D/REVIEW 5건은 '사람 몫' 목록으로 분리, '부분' 5건 보수 집계.
+- **예외 시나리오**: question 컬럼 누락 CSV → 필수 컬럼 안내+템플릿 출력 후 exit 1, 출력 미생성(짐작 진행 없음). (환각 ID 거부는 step-05 스모크에서 기확인)
+- 실증 발견 반영: 로컬 marketplace 매니페스트는 `.agents/plugins/marketplace.json` 위치만 인식 → README 설치 절차를 검증된 명령으로 교체.
+- Codex 세션 로그 원본을 `logs/codex/`에 복사(가공 없음). **사고 기록**: 복사 중 병렬 실행되던 타 회사 폴더(cwd 상이)의 세션 파일 1개가 섞여 들어와 cwd 확인 즉시 그 복사본만 제거(원본은 ~/.codex/sessions에 보존, 채널톡 로그는 무수정) — 회사 간 분리 원칙 준수, 전 과정 이 세션 로그에 기록됨.
+- `context/verification.md` 작성(A 절차/B 정상/C 예외/D 가드레일/E 이슈·수정/F 한계).
+- `question.md` 5문항 완성 — 자수 측정 스크립트로 확인: **679/677/998/711/799** (제한 800/800/1000/800/800) 전 문항 통과, 문항 2 출처 URL 7건(대장 등재·무로그인 확인분), 문항 3 ↔ README 일치, 문항 5 ↔ verification.md·로그 정합.
+- 제출 전 체크리스트(WORKFLOW.md) 전 항목 수행: zip 드라이런(src/·README.md·logs/만, 36KB ≤100MB) ✅ / plugin.json 필드 ✅ / README↔문항3 ✅ / 자수+URL ✅ / logs 원본 ✅.
+
+### 핵심 발견과 결정
+- Codex가 SKILL.md의 판단 계약을 그대로 준수함을 실증: C(정책)·D(태스크)·REVIEW에 초안을 만들지 않았고, 근거 티켓을 전건 인용했으며, simulate.py 검증 게이트(스키마·환각 ID·전건 커버)를 통과.
+- 데모 수치 확정: 55.0% → 85.0% (+30.0%p, 합성 데이터 시뮬레이션 기준 — 리포트에 '실측 아님' 자동 고지).
+- Codex 사용량 한도(무료 계정)로 재실행 데모에는 유료/타 계정 필요 — 한계로 기록.
+
+### 게이트 체크
+- [✅] 제출 전 체크리스트 전 항목 — 위 6항목 수행 완료 (zip 드라이런 포함)
+- [✅] question.md 자수 확인 결과 기재 — 문서 말미 표(679/677/998/711/799) + 측정 방법 명시
+- [✅] 검증 실행 기록이 세션 로그에 실존 — 이 세션(logs/claude-code/) + Codex 실행 원본(logs/codex/rollout-2026-07-09T23-36-03-….jsonl)
+
+### 오케스트레이터에게 요청
+없음 — 제출 준비 완료. submission.zip 생성·업로드는 사용자 수행(체크리스트·드라이런 결과는 verification.md 참조). 참고: 최종 zip은 제출 직전에 생성해야 마지막 세션 로그까지 포함됨.

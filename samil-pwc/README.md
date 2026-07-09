@@ -47,8 +47,9 @@ src/
 2. marketplace 등록 후 설치:
    ```bash
    codex plugin marketplace add ./haenggan-marketplace
+   codex plugin add haenggan-audit@samil-local-plugins
    ```
-   Codex 실행 → `/plugins` → `haenggan-audit` 설치.
+   (`codex plugin list`로 `installed, enabled` 확인. 대화형을 선호하면 Codex 실행 → `/plugins`에서 설치해도 된다.)
 3. 프롬프트 입력:
    ```
    haenggan-audit 스킬로 (플러그인의) data/demo 를 행간 감사해서 report.md를 만들어줘

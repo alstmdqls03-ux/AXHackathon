@@ -8,16 +8,28 @@
 
 요구 사항: Codex CLI + Python 3.8+ (외부 패키지·네트워크·API 키 **불필요**)
 
-**방법 A — repo marketplace**
-1. 평가용 저장소 루트에 `plugins/resolution-lift/`를 만들고 이 zip의 `src/` 내용물을 복사
-2. `$REPO_ROOT/.agents/plugins/marketplace.json`에 플러그인 등록 (OpenAI 플러그인 문서 기준: https://developers.openai.com/codex/plugins )
-3. Codex 재시작 → 스킬 `resolution-lift` 활성 확인
+**방법 A — 로컬 marketplace 등록 (검증 완료 절차, Codex CLI 0.142 기준)**
 
-**방법 B — personal marketplace**
-1. `~/.codex/plugins/resolution-lift/`에 `src/` 내용물을 복사
-2. `~/.agents/plugins/marketplace.json`에 등록 후 Codex 재시작
+```bash
+# 1) 아무 위치에 마켓플레이스 디렉터리 구성
+mkdir -p my-marketplace/resolution-lift my-marketplace/.agents/plugins
+cp -R <압축 해제 경로>/src/. my-marketplace/resolution-lift/
 
-**방법 C — 폴백 (marketplace 없이 확인)**
+# 2) 매니페스트 작성 — 위치가 정확히 .agents/plugins/marketplace.json 이어야 함
+cat > my-marketplace/.agents/plugins/marketplace.json <<'EOF'
+{ "name": "ax-local",
+  "plugins": [ { "name": "resolution-lift", "source": "./resolution-lift",
+                 "description": "AI 상담 해결률 개선 파이프라인" } ] }
+EOF
+
+# 3) 등록·설치
+codex plugin marketplace add "$(pwd)/my-marketplace"
+codex plugin add resolution-lift@ax-local
+```
+
+(참고: OpenAI 플러그인 문서 https://developers.openai.com/codex/plugins — 루트 `marketplace.json`은 인식되지 않고 `.agents/plugins/marketplace.json`만 지원됨을 실행으로 확인)
+
+**방법 B — 폴백 (marketplace 없이 확인)**
 플러그인 등록 환경이 어긋나도 동작 검증이 가능합니다: Codex 세션에서
 `src/skills/resolution-lift/SKILL.md 를 읽고, src/examples/tickets.csv 와 src/examples/faq.csv 로 파이프라인을 실행해줘`
 라고 요청하면 동일하게 작동합니다 (스킬 본문이 전체 절차를 지시).
