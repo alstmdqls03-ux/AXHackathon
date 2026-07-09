@@ -12,7 +12,8 @@
 ## 2. [Research] 문제 정의 및 리서치 — 타임박스: 회사당 2~3시간
 
 - 방법·출처 규칙: `RESEARCH_PLAYBOOK.md`
-- 산출물: `<회사>/research/problem.md`, `<회사>/research/sources.md`
+- **첫 작업**: 출제자 힌트 영상 전사·타임스탬프 요약 → `context/hint-video-transcript.md`, `context/hint-video.md` (출제 기업 직접 힌트 = 최상위 가중치)
+- 산출물: `<회사>/context/` (hint-video*.md, problem.md, sources.md)
 - **게이트**: ① Problem Statement 1개 확정 ② 공개 출처 URL 3개 이상(접근 확인) ③ "누가/어떤 상황에서/어디서 막히는가"가 문항 1·2 초안으로 바로 옮겨질 수 있는 상태
 
 ## 3. [Solution] 솔루션 선정 — 타임박스: 회사당 ~1시간
