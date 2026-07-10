@@ -1,0 +1,32 @@
+{
+  "options": [
+    {
+      "id": "hold",
+      "what_happens": "지금은 매도하지 않으므로 평가손익 {metrics.unrealized_pnl_krw}이 확정되지 않고 계속 변합니다.",
+      "evidence": ["metrics.unrealized_pnl_krw", "metrics.true_return_krw_pct"],
+      "locked_in": "새로 확정되는 손익은 없습니다. 보유 수량 {metrics.qty}주는 그대로 남습니다.",
+      "unknown": "다음 주가와 환율입니다. 이 리포트는 미래 가격을 계산하지 않습니다."
+    },
+    {
+      "id": "partial_sell",
+      "what_happens": "보유 수량 중 일부를 팔면 판 수량에 해당하는 손익만 확정되고 나머지는 계속 변합니다.",
+      "evidence": ["metrics.realized_loss_if_sell_krw", "metrics.unrealized_pnl_krw"],
+      "locked_in": "판 수량의 손익은 되돌릴 수 없고, 남긴 수량의 손익은 미실현 상태로 남습니다.",
+      "unknown": "남긴 수량의 미래 가치와 팔지 않은 수량의 이후 손익은 이 리포트가 알 수 없습니다."
+    },
+    {
+      "id": "dca",
+      "what_happens": "현재가 {metrics.price_now_usd} 기준으로 추가 매수하면 평균 원가 {metrics.avg_cost_usd}가 다시 계산되고 원금 노출이 늘어납니다.",
+      "evidence": ["metrics.price_now_usd", "metrics.avg_cost_usd", "metrics.invested_krw"],
+      "locked_in": "추가 투입한 금액이 새로 시장 위험에 노출됩니다.",
+      "unknown": "평균 원가 변화가 실제 손익으로 이어질지는 이후 주가와 환율에 달려 있으며 이 리포트는 알 수 없습니다."
+    },
+    {
+      "id": "sell_all",
+      "what_happens": "전량 매도하면 현재 기준 확정 손익 {metrics.realized_loss_if_sell_krw}과 세금 {metrics.tax_if_sell_krw}이 계산됩니다.",
+      "evidence": ["metrics.realized_loss_if_sell_krw", "metrics.tax_if_sell_krw", "metrics.sell_fee_usd"],
+      "locked_in": "보유 수량 {metrics.qty}주에 대한 손익이 확정되고 이후 가격 변동에는 참여하지 않습니다.",
+      "unknown": "매도 뒤 주가와 환율이 어떻게 움직일지는 이 리포트가 알 수 없습니다."
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "options": [
+    {
+      "id": "hold",
+      "what_happens": "지금은 아무것도 실현되지 않습니다. 평가손익 {metrics.unrealized_pnl_krw}이 시장과 함께 계속 움직입니다.",
+      "evidence": ["metrics.unrealized_pnl_krw"],
+      "locked_in": "확정되는 것은 없습니다.",
+      "unknown": "내일의 주가와 환율."
+    },
+    {
+      "id": "partial_sell",
+      "what_happens": "보유 수량의 일부만 팔아 그만큼의 손익을 확정합니다.",
+      "evidence": ["metrics.realized_loss_if_sell_krw"],
+      "locked_in": "판 수량만큼의 손익이 확정됩니다.",
+      "unknown": "남긴 수량의 앞으로의 가치."
+    },
+    {
+      "id": "dca",
+      "what_happens": "추가 매수하면 평균 단가가 내려가는 대신 투입 원금이 늘어납니다.",
+      "evidence": ["metrics.avg_cost_usd"],
+      "locked_in": "추가로 투입한 원금이 시장 위험에 새로 노출됩니다.",
+      "unknown": "낮아진 평균 단가가 이익으로 돌아올지."
+    },
+    {
+      "id": "sell_all",
+      "what_happens": "지금 파는 것이 가장 좋습니다. 손실 -40,000원을 확정하세요.",
+      "evidence": ["metrics.realized_loss_if_sell_krw"],
+      "locked_in": "손익 금액이 확정됩니다.",
+      "unknown": "매도 후의 주가."
+    }
+  ]
+}
