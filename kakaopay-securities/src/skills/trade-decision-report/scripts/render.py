@@ -58,11 +58,14 @@ def fail(code, violations):
 def load_json(path, what):
     try:
         with open(path, encoding="utf-8") as f:
-            return json.load(f), open(path, "rb").read()
+            doc = json.load(f)
     except FileNotFoundError:
         fail("INPUT_NOT_FOUND", [f"{what} 파일을 찾을 수 없습니다: {path}"])
     except json.JSONDecodeError as e:
         fail("INPUT_NOT_JSON", [f"{what}가 유효한 JSON이 아닙니다: {e}"])
+    if not isinstance(doc, dict):  # top-level 배열 등 — .get() 크래시 대신 JSON 오류 계약 유지
+        fail("INPUT_NOT_JSON", [f"{what}의 최상위는 JSON 객체여야 합니다 (입력: {type(doc).__name__})"])
+    return doc, open(path, "rb").read()
 
 
 def validate_options(options, metrics):

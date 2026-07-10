@@ -140,6 +140,14 @@ class TestRender(unittest.TestCase):
             self.assertIn("UNGROUNDED_NUMBER", codes)
             self.assertFalse(out.exists())  # 위반 시 리포트 미생성
 
+    def test_top_level_array_json_rejected_not_crash(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "opts.json"
+            p.write_text("[1, 2, 3]")  # LLM이 만들 법한 top-level 배열 — 크래시 아닌 JSON 오류 계약 유지
+            r = run("render.py", SAMPLES / "diagnosis.json", p, "--out", Path(d) / "report.md")
+            self.assertEqual(r.returncode, 1)
+            self.assertEqual(json.loads(r.stdout)["error"], "INPUT_NOT_JSON")
+
     def test_ranking_field_in_schema_rejected(self):
         opts = json.loads((SAMPLES / "options.sample.json").read_text())
         opts["options"][0]["rank"] = 1  # 순위 필드 주입

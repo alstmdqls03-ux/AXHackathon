@@ -46,7 +46,7 @@
    python3 scripts/render.py samples/diagnosis_flows.json samples/options.sample.json --out samples/report_flows.md
    ```
    (출력은 `samples/`의 동봉 골든 파일을 재생성한다 — 결정론이라 byte-identical, zip 루트에 새 파일이 생기지 않는다.)
-   데이터 출처: **한국예탁결제원 증권정보포털 SEIBro** (https://seibro.or.kr — 종목별내역 화면 딥링크: https://seibro.or.kr/websquare/control.jsp?w2xPath=%2FIPORTAL%2Fuser%2Fdeposit%2FBIP_CNST01536V.xml&menuNo=359, 둘 다 로그인 없이 접근 가능·2026-07-10 HTTP 200 확인) — 경로: 국제거래 > 외화증권예탁결제 > 종목별내역(주식 TOP50), 종목별 매수·매도 결제금액(USD) 공개. `samples/flows.csv`는 형식 예시용 **합성 데이터**이며, 실제 데이터는 위 경로에서 내려받아 같은 헤더로 저장해 쓴다(UTF-8, 엑셀 BOM 허용).
+   데이터 출처: **한국예탁결제원 증권정보포털 SEIBro** (https://seibro.or.kr — 종목별내역(주식TOP50) 화면 딥링크: https://seibro.or.kr/websquare/control.jsp?w2xPath=%2FIPORTAL%2Fuser%2FovsSec%2FBIP_CNTS10013V.xml&menuNo=921, 둘 다 로그인 없이 접근 가능·2026-07-10 HTTP 200 확인) — 경로: 국제거래 > 외화증권예탁결제 > 종목별내역(주식 TOP50), 종목별 매수·매도 결제금액(USD) 공개. `samples/flows.csv`는 형식 예시용 **합성 데이터**이며, 실제 데이터는 위 경로에서 내려받아 같은 헤더로 저장해 쓴다(UTF-8, 엑셀 BOM 허용).
 
 ## 작동 방식 (문항 3과 동일)
 
@@ -83,4 +83,4 @@
 - **정상 (매매동향)**: 위 "설치·실행 4" 명령(`--flows samples/flows.csv`) → metrics에 `flow_*` 6종 추가(매수 $500,000,000.00 / 매도 $460,000,000.00 / 순매수 $40,000,000.00, 2026-06-30 ~ 2026-07-06 자료 5일치), 리포트 ① 안에 "국내 투자자 매매동향" 표 + 비신호 고지 — 동봉 골든 `samples/report_flows.md`와 byte-identical. `--flows` 미제공 시 산출물은 기존과 byte-identical(report-id `8d1a510771e6` 불변, 테스트가 골든 대조로 실증).
 - **예외 4 (매매동향 행 오류)**: 날짜 형식 위반·음수 금액·숫자 아님 행 포함 flows CSV → `CSV_INVALID` + 행 번호별 오류 목록(메시지에 flows 파일 명시), 리포트 미생성, exit 1.
 - 문서 규율 자가 검사: `python3 scripts/check_docs.py <폴더>` — 공백 주장 (추정) 표기·납득 프레임 문구 확인. `<폴더>`는 zip 루트(이 README.md가 있는 위치).
-- 자동 테스트(E2E 10건, 표준 라이브러리만): zip 루트에서 `python3 -m unittest discover src/tests -v` — 정상 1 + 예외 3 + 스키마·denylist 거부 경로 + 매매동향(flows) 정상·하위호환·예외 3건.
+- 자동 테스트(E2E 11건, 표준 라이브러리만): zip 루트에서 `python3 -m unittest discover src/tests -v` — 정상 1 + 예외 3 + 스키마·denylist·비객체 JSON 거부 경로 + 매매동향(flows) 정상·하위호환·예외 3건.
