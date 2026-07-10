@@ -62,6 +62,7 @@ code{background:#f0f2f5;padding:0 .3rem;border-radius:3px;font-size:.88em}
 <tr><td>제출 zip 스모크 (압축 해제 후 재실행)</td><td class="ok">ALL PASS</td><td class="ok">ALL PASS (unittest 7건 포함)</td><td class="ok">ALL PASS</td></tr>
 </table>
 <p class="meta">스모크 테스트: 제출된 zip을 임시 폴더에 풀어 구조(src+README+logs만, plugin.json 필수필드, __pycache__/.DS_Store 0건, ≤100MB)와 전체 .py의 macOS 기본 Python 3.9 컴파일, README 검증 명령 전체(정상+예외 경로)를 재실행 — 3사 전 항목 통과 (2026-07-10 11:12).</p>
+<p class="meta">추가 검증 (13:30~): ① zip 추출본에서 Codex <b>설치 계층 왕복</b>(marketplace add → plugin add → installed·enabled 확인 → 제거·원상복구) 3사 성공. ② Codex 모델 턴 재실행은 계정 사용량 한도로 불가("try again at Aug 9th" — <code>codex exec</code> 프로브 실측, 계정 단위라 3사 공통). 오전 완주분 rollout·report.md가 이미 zip에 동봉되어 있어 증거 손실 없음. ③ 루트 오케스트레이터 세션 로그는 3사 zip 모두 미포함(의도된 설계 — 3사 전략 혼재로 포함 시 회사 간 분리 위반; 회사별 조정 이력은 pane 로그의 지시문으로 추적 가능). kakao zip 내 logs/orchestrator/는 해당 회사 pane 자신의 서브에이전트 로그로 교차 오염 0건. ④ question.md 자수 실측: 3사 15문항 전건 제한 이내.</p>
 <p class="meta">전역: 비밀정보 패턴 0건 · 회사 간 교차 오염 0건 · 로그 편집·삭제 0건(무편집 이동은 cmp 검증 + README.txt 경위 문서화 + git 이력 보존)</p>
 
 <h2>4. Codex E2E 완주 경위 (7/10 오전)</h2>
