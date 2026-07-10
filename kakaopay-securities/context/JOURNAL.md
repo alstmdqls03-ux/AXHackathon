@@ -213,3 +213,23 @@
 
 ### 오케스트레이터에게 요청
 - 제출 직전 submission.zip 재생성(logs/codex 포함 최신화, __pycache__ 미포함 확인) 후 업로드. E2E까지 완료 — 이후 작업 없음.
+
+## [step-10] 제출 완료 기록 + 폼↔저장소 대조 — 2026-07-10 11:12 KST
+
+### 제출 사실
+- 사용자가 제출 폼(https://hack.primer.kr/rounds/10/opportunities/4/submission/new)에 직접 제출 완료. 정확한 제출 시각은 폼 확인 화면 기준(사용자 보관 캡처)이며, 시점은 폼 복붙 자료 출력(2026-07-10 오전, submission.zip 재생성 직후) 이후 ~ 이 기록 등록 시각(11:12 KST) 이전.
+- 제출물: submission.zip 1.2MB / 102파일 (src/ + README.md + logs/, 마감 2026-07-10 23:59:59 전 재제출 가능 — 절차는 context/SUBMIT-RUNBOOK.md).
+
+### 폼 입력값 ↔ 저장소 대조 (2026-07-10 11:12 재측정)
+- **문항 1~5 본문**: question.md 각 절과 동일 원문 제공(복붙). 자수 재측정 694/716/988/684/731 — 폼 복붙 시 제공한 수치와 전항 일치, 전 문항 제한 내.
+- **문항 2 출처 URL 7건**: question.md의 출처 절과 순서·URL 전부 일치 (youtube 힌트 영상 / kcmi 1243 / kcmi 1481 / a-ha.io / industrynews 73167 / newsis / kakaopaysec id=12).
+- **zip 구성 ↔ 저장소**: zip을 스크래치에 해제해 `diff -rq` — src/ 전체·README.md·logs/ 전부 저장소와 동일. 유일한 차이는 진행 중인 이 세션 로그(zip 13,062B vs 라이브 15,676B)로, zip 사본이 라이브 로그의 byte-exact prefix임을 cmp로 확인(PREFIX-OK) — zip 생성 후 로그가 자란 자연스러운 결과이며 편집 아님.
+
+### 게이트 체크
+- ✅ 로그 불가침 — 읽기·prefix 대조만, 편집·삭제 0건
+- ✅ 폼 입력값 ↔ question.md 정합 — 본문·자수·URL 7건 전항 일치
+- ✅ zip ↔ 저장소 정합 — src/·README.md·logs/ diff 무차이 (세션 로그 성장분은 prefix 검증)
+- ✅ 회사 간 분리 — 이 폴더와 스크래치만 접촉
+
+### 오케스트레이터에게 요청
+- 없음. 제출 완료 — 마감 전 수정 필요 시에만 SUBMIT-RUNBOOK.md §4(재제출 절차) 수행.
