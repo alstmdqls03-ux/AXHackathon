@@ -227,3 +227,19 @@
 
 ### 오케스트레이터에게 요청
 step-07부터 유효한 잔여 3건: ① step-07·08 수정분 커밋 ② submission.zip 재생성(SKILL.md·checks.py·README 변경 포함) ③ Codex E2E 재실행(쿼터 확보 시).
+
+## [step-09] Codex E2E 완주 마무리 — 2026-07-10
+
+### 한 일
+- ① 오늘 자 E2E rollout 세션 2건을 `~/.codex/sessions/2026/07/10/`에서 확인 후 **무편집 복사**(cp -p → `cmp` byte-identical 통과)로 `logs/codex/`에 추가: `rollout-…T10-23-56-019f499f….jsonl`(codex-tui, cwd=samil-pwc, 쿼터로 중단된 세션)과 `rollout-…T10-28-51-019f49a4….jsonl`(codex_exec, cwd=samil-pwc, 01:34:24Z 종료 = report.md 생성 시각 10:34 KST와 일치).
+- ② report.md(폴더 루트, 10:34 생성) 품질 검증 — 심은 문제 3건 전부 발견 확정: F-01 전표 #4712/#4713 자본화·자기승인(H1), F-02 이익-현금흐름 괴리·DSO 49.5→86.8일(H2), F-03 제품 B 마진 +12.0%→-3.0% 부호 반전(H3). 인용 규칙 준수(모든 발견에 전표ID·계정코드·월·제품 좌표), §3에 오탐 기각 기록 존재(#4850/#4851 정기 감가상각 기각, H1-YOY-210 단독 기각, #4800/#4801 H1 기각→H2 라우팅). 핵심 수치를 demo CSV 원본과 대조 — 전부 일치(#4712 840·김민수=김민수, 수선비 3,200→700, 매출채권 5,250→13,500, 제품 B 900 DLH/7,400 MH/배부 420/GP 1,440; 재배부 4,200×7,400/14,000=2,220 → GP -360 = -3.0% 재계산 검증).
+- ③ 문항 5 'E2E 미완' 고지를 완주 결과로 갱신 — 심사자 절차 문장과 병합해 자수 확보. 재측정(python len): 문항1 542 · 문항2 623 · 문항3 965 · 문항4 765 · 문항5 783/800 — 전 문항 통과, 헤더 갱신. (문항1·3 수치가 step-08 대비 -2~-3자인 것은 측정 스크립트의 공백 처리 차이 — 본문 무수정.)
+- ④ E2E 스크래치(`haenggan-marketplace/`, 루트 `report.md`, `findings_candidates.json`)는 zip 범위(src/+README.md+logs/) 밖이므로 그대로 둠 — Codex 세션이 심사자 절차 재현 중 생성한 marketplace 사본과 산출물이며, 증거로서 rollout 로그와 정합.
+
+### 게이트 체크
+- ✅ 로그 불가침: 복사만 수행(cmp byte-identical 2/2), 기존·신규 로그 편집·삭제 0건
+- ✅ 정합: report.md ↔ demo CSV 수치 일치, 문항 5 서술 ↔ report.md(3건 발견·인용 규칙·기각 기록) ↔ logs/codex/ rollout 일치
+- ✅ 자수: 전 문항 제한 내
+
+### 오케스트레이터에게 요청
+잔여: ① 본 수정분(question.md·logs/codex/ 2건·JOURNAL) 커밋 ② **submission.zip 재생성 필수** — logs/codex/에 rollout 2건 추가로 기존 zip은 구본 ③ 제출 폼 입력 시 갱신된 문항 5 사용.
