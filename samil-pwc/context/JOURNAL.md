@@ -243,3 +243,20 @@ step-07부터 유효한 잔여 3건: ① step-07·08 수정분 커밋 ② submis
 
 ### 오케스트레이터에게 요청
 잔여: ① 본 수정분(question.md·logs/codex/ 2건·JOURNAL) 커밋 ② **submission.zip 재생성 필수** — logs/codex/에 rollout 2건 추가로 기존 zip은 구본 ③ 제출 폼 입력 시 갱신된 문항 5 사용.
+
+## [step-10] 제출 완료 기록 — 2026-07-10 11:11 KST
+
+### 한 일
+- 사용자가 제출 폼(https://hack.primer.kr/rounds/10/opportunities/5/submission/new)에 직접 제출 완료. 폼 입력값은 본 세션이 출력한 제출용 최종 자료(question.md 그대로): 문항1 542 · 문항2 623 · 문항3 965 · 문항4 765 · 문항5 783자 + 출처 URL 6건. 첨부는 submission.zip(308KB, 커밋 171b55b 시점 생성본).
+- 제출 후 정합 대조 수행(11:11 KST):
+  - **폼 입력값 ↔ 저장소**: question.md가 자료 출력 시점 이후 무변경(git status에 미등장) — 문항 1~5 본문·자수·URL 목록이 저장소 HEAD와 일치.
+  - **zip ↔ 저장소**: submission.zip 압축 해제 후 `diff -r` — `src/`와 `README.md` 바이트 동일. `logs/`는 본 세션 라이브 로그(b6d03fd7….jsonl) 1건만 상이 — zip 생성(11:06) 이후 훅이 계속 기록한 성장분으로, 사전에 JOURNAL·최종 응답에 고지된 정상 동작. 그 외 로그 파일(claude-code 2건, codex rollout 3건, stray 3건) 전부 동일.
+
+### 게이트 체크
+- ✅ 정합: 폼 5문항 ↔ question.md ↔ README/SKILL.md ↔ logs/ (step-09 검증 체계 유지)
+- ✅ zip 규격: src/(.codex-plugin/plugin.json 포함) + README.md + logs/, 308KB ≤ 100MB, 무결성 통과
+- ✅ 로그 불가침: 대조는 스크래치 폴더에서 사본으로 수행, logs/ 무접촉
+- ✅ 마감: 2026-07-10 23:59:59 이전 제출 완료 (마감 전 재제출 가능 조항 유효)
+
+### 상태
+삼일PwC 제출 완주. 잔여 작업 없음.
