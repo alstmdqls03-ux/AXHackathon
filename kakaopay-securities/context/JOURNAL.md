@@ -233,3 +233,27 @@
 
 ### 오케스트레이터에게 요청
 - 없음. 제출 완료 — 마감 전 수정 필요 시에만 SUBMIT-RUNBOOK.md §4(재제출 절차) 수행.
+
+## [step-11] 매매동향(flows) 기능 추가 + 재제출 준비 — 2026-07-10
+
+### 한 일
+- **기능 추가 (bmad-quick-dev 워크플로우 완주)**: 사용자 요청 "챗봇/RAG로 기관 매매동향" → OpenAI 키 기반 안은 규정(비밀정보)·직접 구동 요건·문항 3 주장과 충돌해 기각하고, **선택 입력 `--flows flows.csv`**(SEIBro 공개 외화증권 결제 집계를 사용자가 제공)로 재설계. KRX 기관/외인 데이터는 미국 주식 데모와 부정합 → **SEIBro 서학개미 결제 집계**(seibro.or.kr, 딥링크 포함 2026-07-10 HTTP 200 확인) 채택. diagnose.py가 `flow_*` metrics 6종을 결정론 집계, render.py가 ① 진단 안에 **무LLM 고정 템플릿** 서브섹션(표+비신호 고지 하드코딩) 조립 — 3단 구조·무추천·숫자 접지 인바리언트 유지.
+- **적대 리뷰 2종(Blind Hunter·Edge Case Hunter) → 16건 분류**: intent_gap·bad_spec 0, patch 15건 전부 적용(BOM utf-8-sig, 헤더 list 비교로 중복 열 거부, 실존 날짜 검증, nan/inf 거부, 필드별 오류 수집, OSError/디코드 광역 catch, 음수 순매도 "-$X" 표기, "자료 N일치" 라벨, 불완전 flow 세트 SCHEMA_INVALID, 골든 byte 대조 테스트, SKILL.md 동조 프레임 금지 지침, README 이중 방어 고지 등), defer 2건(read_trades 동종 강화·기존 테스트 temp 누수 — deferred-work.md), reject 1건(날짜 연속성 — 영업일 공백은 정상).
+- **하위 호환 실증**: `--flows` 미제공 시 diagnosis byte-identical(diff 무차이) + report 골든 `samples/report.md`와 byte 동일(report-id 8d1a510771e6 불변) — 테스트가 골든 대조로 검증. 기존 테스트 7건 무수정 통과.
+- **검증**: 테스트 10건 OK (homebrew 3.14 + `/usr/bin/python3` 3.9.6 모두), README 검증 시퀀스 전체 재실행(정상 2·예외 재현), check_docs 통과, 골든 재생성 후 git 변경 0건(결정론 재현). flows 골든 report-id **757219481028**.
+- **question.md 정합 갱신**: 문항 1(+매매동향 표 한 문장)·문항 4(+OpenAI 안 기각 사유)·문항 5(+테스트 10건) — 자수 757/716/988/769/790 전 문항 제한 내, 하단 표 갱신.
+- 커밋 `4c10ab8`(기능+리뷰 하드닝, __pycache__ 제외·.gitignore 추가), 이어서 question.md·JOURNAL·zip 커밋.
+
+### 핵심 발견과 결정
+- "누가 언제 샀나"는 국내 주식용 KRX 기관/외인 데이터로는 미국 주식 데모와 모순 — SEIBro 외화증권 결제 집계가 유일하게 정합하는 공개 데이터라는 판단이 이 기능의 성립 조건이었다.
+- 신호 누출의 실제 경로는 새 섹션이 아니라 **선택지 서술 채널**(LLM이 flow metric을 동조 프레임으로 인용) — denylist로 완전 차단 불가 → SKILL.md 지침+렌더러 고지 이중 방어로 대응하고 README 한계에 정직 고지.
+
+### 게이트 체크
+- ✅ 로그 불가침 — logs/ 편집·삭제 0건 (git add만)
+- ✅ 하위 호환 — 미제공 시 byte-identical, report-id 8d1a510771e6 불변 (골든 대조 테스트로 상시 검증)
+- ✅ 자수 전 문항 제한 내 — 757/716/988/769/790
+- ✅ 외부 의존성 0·3.9.6 재현·외부 조회 없음 유지 (OpenAI 연동 없음)
+- ✅ logs↔플러그인↔question.md 정합 — 문항 4의 기각 서사·문항 5의 테스트 10건이 이 세션 로그와 일치
+
+### 오케스트레이터에게 요청
+- submission.zip 재생성 완료 후 **폼 재제출은 사용자 수행**(SUBMIT-RUNBOOK.md — 문항 1·4·5 텍스트가 바뀌었으므로 전체 재입력 필요). 마감 23:59:59, 23:30 이후 변경 동결.
