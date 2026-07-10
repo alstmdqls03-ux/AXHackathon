@@ -40,6 +40,13 @@
    python3 scripts/render.py samples/diagnosis.json samples/options.sample.json --out samples/report.md
    cat samples/report.md
    ```
+4. **(선택) 국내 투자자 매매동향 맥락 추가** — `--flows`로 매매동향 CSV(헤더 `date,buy_usd,sell_usd`)를 주면 metrics에 `flow_*` 6종이 추가되고, 리포트 ① 진단 안에 렌더러 하드코딩 서브섹션(기간·매수·매도·순매수 표 + 비신호 고지)이 들어간다. LLM은 이 섹션에 한 글자도 쓰지 않는다:
+   ```bash
+   python3 scripts/diagnose.py samples/trades.csv --price 160 --fx 1380 --flows samples/flows.csv --out samples/diagnosis_flows.json
+   python3 scripts/render.py samples/diagnosis_flows.json samples/options.sample.json --out samples/report_flows.md
+   ```
+   (출력은 `samples/`의 동봉 골든 파일을 재생성한다 — 결정론이라 byte-identical, zip 루트에 새 파일이 생기지 않는다.)
+   데이터 출처: **한국예탁결제원 증권정보포털 SEIBro** (https://seibro.or.kr — 종목별내역 화면 딥링크: https://seibro.or.kr/websquare/control.jsp?w2xPath=%2FIPORTAL%2Fuser%2Fdeposit%2FBIP_CNST01536V.xml&menuNo=359, 둘 다 로그인 없이 접근 가능·2026-07-10 HTTP 200 확인) — 경로: 국제거래 > 외화증권예탁결제 > 종목별내역(주식 TOP50), 종목별 매수·매도 결제금액(USD) 공개. `samples/flows.csv`는 형식 예시용 **합성 데이터**이며, 실제 데이터는 위 경로에서 내려받아 같은 헤더로 저장해 쓴다(UTF-8, 엑셀 BOM 허용).
 
 ## 작동 방식 (문항 3과 동일)
 
@@ -65,7 +72,7 @@
 - LLM 산출물이 규칙 위반 → 3종 거부 코드와 함께 리포트 미생성, 수정 후 재시도(위반은 사용자에게도 공개).
 - 의도 모호 → 질문 1개로 구체화. 추천 요구 → 순위를 제시하지 않는 이유를 설명하고 판단 재료를 안내.
 
-**한계(정직 고지)**: 세금은 단순화 계산(연 250만 원 기본공제 초과분 22%, 손익통산·환차익 미반영). denylist는 완전하지 않으나 거부→재작성 루프로 동작. 이 플러그인은 투자 자문이 아니다.
+**한계(정직 고지)**: 세금은 단순화 계산(연 250만 원 기본공제 초과분 22%, 손익통산·환차익 미반영). denylist는 완전하지 않으나 거부→재작성 루프로 동작 — 특히 매매동향(`flow_*`) 수치를 선택지 서술에 동조 프레임("함께 사는" 등)으로 끌어오는 표현은 어휘 필터만으로 다 막지 못하므로, SKILL.md가 LLM에 사실 서술 전용을 지시하고 렌더러 고지가 신호 해석을 차단하는 이중 방어를 쓴다. 이 플러그인은 투자 자문이 아니다.
 
 ## 검증 (이 폴더 세션에서 실제 실행 — 로그와 정합)
 
@@ -73,5 +80,7 @@
 - **예외 1 (입력 누락)**: `python3 scripts/diagnose.py samples/trades.csv --fx 1380` → `REQUIRED_INPUT_MISSING` (price가 왜 필요한지 포함), exit 1.
 - **예외 2 (규칙 위반 주입)**: `python3 scripts/render.py samples/diagnosis.json samples/options_violation.json` → `RANKING_LANGUAGE_DETECTED`("가장") + `UNGROUNDED_NUMBER`(-40,000원) 검출, 리포트 미생성, exit 1.
 - **예외 3 (범위 외)**: SELL 행 포함 CSV → `UNSUPPORTED_SCOPE`, exit 1.
+- **정상 (매매동향)**: 위 "설치·실행 4" 명령(`--flows samples/flows.csv`) → metrics에 `flow_*` 6종 추가(매수 $500,000,000.00 / 매도 $460,000,000.00 / 순매수 $40,000,000.00, 2026-06-30 ~ 2026-07-06 자료 5일치), 리포트 ① 안에 "국내 투자자 매매동향" 표 + 비신호 고지 — 동봉 골든 `samples/report_flows.md`와 byte-identical. `--flows` 미제공 시 산출물은 기존과 byte-identical(report-id `8d1a510771e6` 불변, 테스트가 골든 대조로 실증).
+- **예외 4 (매매동향 행 오류)**: 날짜 형식 위반·음수 금액·숫자 아님 행 포함 flows CSV → `CSV_INVALID` + 행 번호별 오류 목록(메시지에 flows 파일 명시), 리포트 미생성, exit 1.
 - 문서 규율 자가 검사: `python3 scripts/check_docs.py <폴더>` — 공백 주장 (추정) 표기·납득 프레임 문구 확인. `<폴더>`는 zip 루트(이 README.md가 있는 위치).
-- 자동 테스트(E2E 7건, 표준 라이브러리만): zip 루트에서 `python3 -m unittest discover src/tests -v` — 정상 1 + 예외 3 + 스키마·denylist 거부 경로.
+- 자동 테스트(E2E 10건, 표준 라이브러리만): zip 루트에서 `python3 -m unittest discover src/tests -v` — 정상 1 + 예외 3 + 스키마·denylist 거부 경로 + 매매동향(flows) 정상·하위호환·예외 3건.

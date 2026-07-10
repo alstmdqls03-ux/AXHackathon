@@ -119,7 +119,8 @@ def fmt(metrics, key):
     if key.endswith("_pct") or key.endswith("_pp"):
         return f"{val:+.2f}%p" if key.endswith("_pp") else f"{val:.2f}%"
     if key.endswith("_usd"):
-        return f"${val:,.2f}"
+        # 음수(순매도 등)는 "-$X" — "$-X"는 통화 표기로 어색 (flow_net_buy_usd가 최초의 음수 가능 _usd)
+        return f"-${abs(val):,.2f}" if val < 0 else f"${val:,.2f}"
     if key == "fx_now" or key == "avg_buy_fx":
         return f"{val:,.1f}원"
     return str(val)
@@ -149,6 +150,21 @@ def build_report(metrics, options, chosen):
         f"| 지금 전량 매도 시 확정 손익(제비용 반영) | {m['realized_loss_if_sell_krw']:,.0f}원 |",
         f"| 매도 시 양도소득세(단순화 계산) | {m['tax_if_sell_krw']:,.0f}원 |",
         "",
+    ]
+    if "flow_days" in m:  # --flows 제공 시에만 존재 — 고정 템플릿(제약 3), LLM은 이 섹션에 한 글자도 쓰지 않는다
+        lines += [
+            "### 국내 투자자 매매동향 (입력 데이터 기준)",
+            "",
+            "| 기간 | 매수 결제액 | 매도 결제액 | 순매수(음수는 순매도) |",
+            "|---|---|---|---|",
+            # "자료 N일치": 결제 데이터는 영업일만 있어 달력 기간과 자료 일수가 다르다 — 행 수를 기간 길이로 오독 방지
+            f"| {m['flow_from_date']} ~ {m['flow_to_date']} (자료 {m['flow_days']}일치) "
+            f"| {fmt(m, 'flow_buy_usd')} | {fmt(m, 'flow_sell_usd')} | {fmt(m, 'flow_net_buy_usd')} |",
+            "",
+            "> 위 매매동향은 입력된 과거 결제 집계 사실이며, 매수·매도 신호가 아닙니다. 다른 투자자의 행동이 미래 수익을 보장하지 않습니다.",
+            "",
+        ]
+    lines += [
         "## ② 선택지 비교 (가나다순)",
         "",
         "> 이 리포트는 순위·추천을 제시하지 않으며, 결정은 사용자의 몫입니다. 미래 주가는 이 리포트가 알 수 없습니다.",
@@ -186,6 +202,12 @@ def main():
     metrics = diagnosis.get("metrics")
     if not isinstance(metrics, dict):
         fail("SCHEMA_INVALID", ["진단 JSON에 metrics 객체가 없습니다 — diagnose.py 출력을 그대로 넘기세요"])
+    if "flow_days" in metrics:  # 손편집된 진단 JSON의 불완전 flow 세트로 조립 중 크래시 방지
+        bad = [k for k in ("flow_buy_usd", "flow_sell_usd", "flow_net_buy_usd")
+               if not isinstance(metrics.get(k), (int, float))]
+        bad += [k for k in ("flow_from_date", "flow_to_date") if not isinstance(metrics.get(k), str)]
+        if bad:
+            fail("SCHEMA_INVALID", [f"flow metrics 불완전·형식 오류: {sorted(bad)} — diagnose.py --flows 출력을 그대로 넘기세요"])
     options = opts_doc.get("options")
     validate_options(options, metrics)
 

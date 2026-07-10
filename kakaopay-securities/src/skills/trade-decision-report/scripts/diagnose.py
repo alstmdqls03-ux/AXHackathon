@@ -6,11 +6,13 @@
 """
 import argparse
 import csv
+import datetime
 import json
 import math
 import sys
 
 CSV_HEADERS = ["date", "ticker", "side", "qty", "price_usd", "fee_usd", "fx_krw_per_usd"]
+FLOWS_HEADERS = ["date", "buy_usd", "sell_usd"]
 
 
 def fail(code, message, **extra):
@@ -81,12 +83,83 @@ def read_trades(path):
     return trades
 
 
+def read_flows(path):
+    """매매동향(flows) CSV → flow_* metrics. 오류 메시지는 거래 내역 CSV와 혼동하지 않도록 flows 파일임을 명시한다."""
+    try:
+        # utf-8-sig: 엑셀 저장 파일의 BOM 허용 (사용자가 직접 만드는 파일이라 실제로 발생)
+        with open(path, newline="", encoding="utf-8-sig") as f:
+            reader = csv.DictReader(f)
+            header = reader.fieldnames
+            rows = list(reader)
+    except OSError as e:
+        fail("CSV_INVALID", f"매매동향(flows) 파일을 열 수 없습니다: {path} ({e})")
+    except (UnicodeDecodeError, csv.Error) as e:
+        fail("CSV_INVALID", f"매매동향(flows) 파일을 읽을 수 없습니다 — UTF-8 CSV여야 합니다: {path} ({e})")
+    # list 비교: 중복·순서 어긋난 열까지 거부 (set 비교는 중복 열을 통과시켜 합계가 조용히 틀어진다)
+    if header != FLOWS_HEADERS:
+        fail("CSV_INVALID", f"매매동향(flows) CSV 헤더가 다릅니다: {path} — 필요한 헤더: {','.join(FLOWS_HEADERS)}")
+    if not rows:
+        fail("CSV_INVALID", f"매매동향(flows) CSV가 비어 있습니다: {path} — 최소 1행이 필요합니다.")
+
+    errors = []
+    dates = []
+    seen = set()
+    buy_total = sell_total = 0.0
+    for i, row in enumerate(rows, start=2):  # 헤더가 1행
+        if None in row:  # 헤더보다 많은 열 — DictReader가 잉여 값을 None 키에 몬다
+            errors.append(f"{i}행: 열 개수가 헤더({len(FLOWS_HEADERS)}개)보다 많습니다")
+            continue
+        date = (row["date"] or "").strip()
+        try:
+            datetime.date.fromisoformat(date)  # 형식+실존 날짜 검증 (2026-99-99 거부)
+        except ValueError:
+            errors.append(f"{i}행: date는 YYYY-MM-DD 형식의 실존 날짜여야 합니다 (입력: {row['date']!r})")
+        else:
+            if date in seen:
+                errors.append(f"{i}행: 중복 날짜입니다 (입력: {date})")
+            else:
+                seen.add(date)
+                dates.append(date)
+        amounts = {}
+        for field in ("buy_usd", "sell_usd"):
+            raw = row[field]
+            try:
+                val = float(raw)
+            except (TypeError, ValueError):
+                errors.append(f"{i}행: {field}는 숫자여야 합니다 (입력: {raw!r})")
+                continue
+            if not math.isfinite(val):
+                errors.append(f"{i}행: {field}는 유한한 숫자여야 합니다 (입력: {raw!r})")
+            elif val < 0:
+                errors.append(f"{i}행: {field}는 음수일 수 없습니다 (입력: {raw!r})")
+            else:
+                amounts[field] = val
+        if len(amounts) == 2:
+            buy_total += amounts["buy_usd"]
+            sell_total += amounts["sell_usd"]
+    if errors:
+        fail("CSV_INVALID", f"매매동향(flows) CSV에 잘못된 행이 있습니다: {path}", rows=errors)
+    if not (math.isfinite(buy_total) and math.isfinite(sell_total)):
+        fail("CSV_INVALID", f"매매동향(flows) 금액 합계가 표현 범위를 넘습니다: {path}")
+
+    return {
+        "flow_days": len(dates),
+        "flow_from_date": min(dates),
+        "flow_to_date": max(dates),
+        "flow_buy_usd": hafz(buy_total, 2),
+        "flow_sell_usd": hafz(sell_total, 2),
+        "flow_net_buy_usd": hafz(buy_total - sell_total, 2),
+    }
+
+
 def main():
     p = argparse.ArgumentParser(description="매매 의사결정 리포트 — 결정론 진단")
     p.add_argument("trades_csv")
     p.add_argument("--price", type=float, default=None, help="현재가 (USD)")
     p.add_argument("--fx", type=float, default=None, help="현재 환율 (KRW/USD)")
     p.add_argument("--sell-fee-rate", type=float, default=0.0007, help="매도 수수료율 (기본 0.07%%)")
+    p.add_argument("--flows", default=None,
+                   help="(선택) 매매동향 CSV — 헤더 date,buy_usd,sell_usd (국내 투자자 매수·매도 결제액, USD)")
     p.add_argument("--out", default=None, help="출력 파일 (기본: stdout)")
     args = p.parse_args()
 
@@ -140,6 +213,8 @@ def main():
         "realized_loss_if_sell_krw": krw(realized_if_sell),  # 음수=손실, 양수=이익
         "tax_if_sell_krw": krw(tax_if_sell),
     }
+    if args.flows is not None:  # 미제공 시 기존 산출물과 byte-identical ('--flows ""'는 조용히 무시하지 않고 열기 오류로 보고)
+        metrics.update(read_flows(args.flows))
     out = json.dumps({"metrics": metrics}, ensure_ascii=False, indent=2)
     if args.out:
         with open(args.out, "w", encoding="utf-8") as f:
