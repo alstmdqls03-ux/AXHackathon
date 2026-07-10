@@ -231,3 +231,18 @@
 
 ### 오케스트레이터에게 요청
 없음 — 클로징 완료. 남은 것은 사용자 수행: 제출 폼 붙여넣기(폼 카운터 확인) + 최종 submission.zip 생성(마지막 세션 로그 포함 위해 제출 직전 생성).
+
+## [step-09] 제출 완료 기록 — 2026-07-10 11:06 KST
+
+### 기록
+- **제출 완료 (사용자 수행·통보 기준, 기록 시각 2026-07-10 11:06:25 KST)** — 폼: https://hack.primer.kr/rounds/10/opportunities/1/submission/new
+- 제출물: `channeltalk/submission.zip` (2026-07-10 재생성본, 121,661 bytes, 루트 = src/·README.md·logs/) + question.md 5문항(자수 672/677/996/731/796) + 출처 URL 7건(전건 당일 200 OK 확인).
+- 제출 전 최종 상태: Python 3.9 호환 수정(step-07b) → 최종 클로징 재현(step-08) → 드라이런(압축 해제→marketplace 등록→plugin add→3.9.6 구동) 통과 → 런북(context/SUBMIT-RUNBOOK.md, cee8f36).
+- 마감(23:59:59) 전 재제출 가능 — 재작업 시 런북 5절 절차(수정→세션 종료→zip 재생성→재제출) 준수.
+
+### 게이트 체크
+- [✅] logs/·*.jsonl 무수정 (이 단계는 JOURNAL 기록만)
+- [✅] 제출 zip은 규정 트리·드라이런 검증본
+
+### 오케스트레이터에게 요청
+없음 — 채널톡 제출 사이클 종료.
