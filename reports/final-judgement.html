@@ -20,8 +20,9 @@ ul{padding-left:1.2rem} li{margin:.3rem 0}
 code{background:#f0f2f5;padding:0 .3rem;border-radius:3px;font-size:.88em}
 .runbook{background:#eef7f1;border:1px solid #9fd3b4;border-radius:8px;padding:1rem 1.2rem}
 </style>
-<h1>최종 심사 리포트 — 3사 제출물 <span class="badge">전원 제출 승인</span></h1>
-<p class="meta">생성: 2026-07-10 · 마감: 2026-07-10 23:59:59 · 심사 방식: AI 심사위원 시뮬레이션 2라운드 (v1 엄격 루브릭 → 수정 → v2 상위 1% 잣대) + 적대적 팩트체커 + 재현 실행(Python 3.9)</p>
+<h1>최종 심사 리포트 — 3사 제출물 <span class="badge">전원 제출 완료</span></h1>
+<p class="meta">최종 갱신: 2026-07-10 11:15 · 마감: 2026-07-10 23:59:59 · 심사 방식: AI 심사위원 시뮬레이션 2라운드 (v1 엄격 루브릭 → 수정 → v2 상위 1% 잣대) + 적대적 팩트체커 + 재현 실행(Python 3.9) + Codex E2E 완주 + 제출 zip 스모크 테스트</p>
+<div class="runbook"><b>제출 현황 (2026-07-10 오전):</b> 채널톡 ✅ · 삼일PwC ✅ · 카카오페이증권 ✅ — 3사 모두 폼 제출 완료. 마감 전 재제출 가능 상태 유지.</div>
 
 <h2>1. 최종 점수 (문항당 20점, 총 100점)</h2>
 <table>
@@ -56,27 +57,30 @@ code{background:#f0f2f5;padding:0 .3rem;border-radius:3px;font-size:.88em}
 <tr><td>재현 실행 (Python 3.9)</td><td class="ok">55.0%→85.0% 전건 일치</td><td class="ok">7지표+report-id 일치</td><td class="ok">후보 19건+심은 신호 3종</td></tr>
 <tr><td>훅 로그 1차 증거</td><td class="ok">적재 확인</td><td class="ok">적재 확인 (report-id 포함)</td><td class="ok">적재 확인 (체커 stdout)</td></tr>
 <tr><td>src/ 내 로그 잔존</td><td class="ok">0건</td><td class="ok">0건</td><td class="ok">0건</td></tr>
-<tr><td>submission.zip</td><td class="ok">120KB ✓구성 검증</td><td class="ok">1.2MB ✓구성 검증</td><td class="ok">104KB ✓구성 검증</td></tr>
+<tr><td>submission.zip (제출본)</td><td class="ok">118KB ✓</td><td class="ok">1.2MB ✓ (로그 68개)</td><td class="ok">300KB ✓ (rollout 2건 포함)</td></tr>
+<tr><td>Codex 모델 턴 E2E</td><td class="ok">완주 (기존)</td><td class="ok">완주 — report.md (report-id a33718a54909), rollout 로그 동봉</td><td class="ok">완주 — report.md 16KB (H1-CAP-4712 인용 10회), rollout 2건(372KB+221KB) cmp 검증 동봉</td></tr>
+<tr><td>제출 zip 스모크 (압축 해제 후 재실행)</td><td class="ok">ALL PASS</td><td class="ok">ALL PASS (unittest 7건 포함)</td><td class="ok">ALL PASS</td></tr>
 </table>
+<p class="meta">스모크 테스트: 제출된 zip을 임시 폴더에 풀어 구조(src+README+logs만, plugin.json 필수필드, __pycache__/.DS_Store 0건, ≤100MB)와 전체 .py의 macOS 기본 Python 3.9 컴파일, README 검증 명령 전체(정상+예외 경로)를 재실행 — 3사 전 항목 통과 (2026-07-10 11:12).</p>
 <p class="meta">전역: 비밀정보 패턴 0건 · 회사 간 교차 오염 0건 · 로그 편집·삭제 0건(무편집 이동은 cmp 검증 + README.txt 경위 문서화 + git 이력 보존)</p>
 
-<h2>4. 남은 것 (선택 항목)</h2>
+<h2>4. Codex E2E 완주 경위 (7/10 오전)</h2>
 <div class="card">
 <ul>
-<li class="warn">Codex 모델 턴 E2E (삼일·카카오): 계정 쿼터(8/4 리셋)로 미완 — 문항 5에 정직 고지되어 있고 등록·설치·트리거·스크립트 계층은 전부 검증됨. 쿼터 있는 계정 확보 시 1회 완주 후 rollout을 logs/codex/에 추가하고 재제출하면 마지막 리스크까지 제거.</li>
-<li>폼 입력 시 폼 자체 카운터로 자수 최종 확인 (채널톡 문항 3이 996/1000으로 타이트).</li>
-<li>pane 세션을 추가로 돌린 경우 업로드 직전 <code>orchestration/make_zip.sh &lt;회사&gt;</code>로 zip 재생성 (로그 최신화).</li>
+<li>신규 로그인 계정으로 삼일·카카오의 Codex 모델 턴을 실제 완주 — 계정 사용량 한도 도달 <b>이전에</b> 산출물 생성 성공 (10:23~10:34).</li>
+<li>카카오: report.md (report-id <code>a33718a54909</code>, 서열화 문구 부재 확인) — 산출물은 rollout 로그가 참조하는 경로 그대로 src/ 내 유지 (로그↔산출물 경로 정합).</li>
+<li>삼일: report.md 16KB — 심은 신호 3종 검출·H1-CAP-4712 10회 인용. rollout 2건은 ~/.codex/sessions에서 <code>cmp</code> byte-identical 검증 후 무편집 복사로 logs/codex/에 동봉, 문항 5 완주 반영 갱신.</li>
+<li>양사 question.md 문항 4·5 갱신 및 자수 재측정 통과, [step-09] JOURNAL 등록.</li>
 </ul>
 </div>
 
-<h2>5. 제출 런북</h2>
+<h2>5. 제출 기록</h2>
 <div class="runbook">
 <ol>
-<li>각 회사 제출 폼 접속 (채널톡 opportunities/1 · 카카오 opportunities/4 · 삼일 opportunities/5)</li>
-<li><code>&lt;회사&gt;/question.md</code>의 5문항 본문을 폼에 복붙 → 폼 카운터로 자수 확인</li>
-<li>문항 2의 출처 URL들을 별도 입력란에 추가 (+버튼)</li>
-<li><code>&lt;회사&gt;/submission.zip</code> 업로드 → 제출</li>
-<li>마감(23:59:59) 전 재제출 가능 — E2E 완주 등 개선 시 zip 재생성 후 재업로드</li>
+<li>채널톡 — 제출 완료 (11:03 zip). SUBMIT-RUNBOOK.md 5절에 재제출 절차 보존.</li>
+<li>삼일PwC — 제출 완료 (11:06 zip, rollout 2건 포함). 폼 입력값↔저장소 대조 완료.</li>
+<li>카카오페이증권 — 제출 완료 (11:10 zip, 로그 68개 포함).</li>
+<li>마감(23:59:59) 전 재제출 가능 — 재제출 시 <code>orchestration/make_zip.sh &lt;회사&gt;</code>로 zip 재생성(로그 최신화) 후 재업로드.</li>
 </ol>
 </div>
 </html>
