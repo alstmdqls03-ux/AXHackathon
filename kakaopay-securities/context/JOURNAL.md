@@ -191,3 +191,25 @@
 
 ### 오케스트레이터에게 요청
 - 제출 직전 submission.zip 재생성(로그 최신화, src/tests·logs/stray 포함, __pycache__ 미포함 확인) 후 업로드. 이후 작업 없음 — 클로징 완료.
+
+## [step-09] Codex E2E 완주 + 마무리 정리 (step-09b) — 2026-07-10
+
+### 한 일
+- **Codex 모델 턴 E2E 완주 확인** (step-06 이래 유일한 미완 항목 해소): 오늘 오전 재로그인 후 재실행한 Codex 세션이 trade-decision-report 스킬을 실제 호출, diagnosis→options JSON→render 파이프라인을 완주해 `src/skills/trade-decision-report/report.md`(report-id **a33718a54909**) 생성. rollout 로그는 `logs/codex/019f49a3-8c3c-7973-a155-f3800b0ca0a9.jsonl`로 저장 — 로그가 해당 report 경로와 report-id를 모두 참조함(grep으로 확인, 읽기만).
+- **question.md 마무리**: 문항 4·5는 E2E 완주 사실이 이미 정확히 반영돼 있어 내용 수정 불필요. 자수 재측정 후 하단 표 갱신 — 694/716/988/**684**/**731** (문항 3 제한 1000, 나머지 800) 전 문항 통과.
+- **report.md 4항 검증**: ①3단 구조(①진단/②선택지 비교 가나다순/③실행 체크리스트) ✓ ②마지막 줄 report-id 스탬프 a33718a54909 ✓ ③서열화 어휘 — '추천|권장|최선|가장' 매치 1건뿐이며 17행 "이 리포트는 순위·추천을 제시하지 않으며…"는 render.py:154 하드코딩 경고문구(LLM 산출 아님) ✓ ④숫자 접지 — options.json 전체(중첩 포함) 스캔 결과 `{metrics.*}` 플레이스홀더 제거 후 숫자 리터럴 0건 ✓.
+- **E2E 산출물 위치 판단 — 그대로 둠**: skill 루트의 report.md·diagnosis.json·options.json은 Codex 턴이 실제로 쓴 경로이고 rollout 로그가 이 경로를 참조하므로, samples/로 이동하면 로그↔산출물 정합(채점 기준)이 깨진다. README의 수동 데모 경로(samples/, report-id 8d1a510771e6)와 충돌 서술 없음 — 정합 유지.
+
+### 핵심 발견과 결정
+- 정합 3각(logs/codex 로그 ↔ report.md ↔ question.md 문항 4·5)이 report-id a33718a54909와 파일 경로로 상호 참조됨 — step-06의 "모델 턴 쿼터 차단" 한계가 완전히 해소되고 문항 5의 "직접 구동" 주장이 모델 턴까지 커버.
+- 결정론 재현 이중 증거: 수동 파이프라인 report-id 8d1a510771e6(samples/) + 모델 턴 report-id a33718a54909(skill 루트, 다른 입력 해시) — 둘 다 유효 산출물 정의(입력 해시 스탬프) 충족.
+
+### 게이트 체크
+- ✅ 로그 불가침 — logs/ 및 *.jsonl 편집·이동·삭제 0건 (grep 읽기만)
+- ✅ 자수 전 문항 제한 내 — 694/716/988/684/731, question.md 하단 표 갱신(2026-07-10)
+- ✅ report.md 서열화 어휘 부재 + 숫자 접지 — 유일한 '추천' 매치는 render.py 하드코딩 경고문구로 확인
+- ✅ logs/codex ↔ report.md ↔ question.md 정합 — report-id·경로 상호 참조 확인
+- ✅ 회사 간 분리 — 이 폴더만 접촉
+
+### 오케스트레이터에게 요청
+- 제출 직전 submission.zip 재생성(logs/codex 포함 최신화, __pycache__ 미포함 확인) 후 업로드. E2E까지 완료 — 이후 작업 없음.

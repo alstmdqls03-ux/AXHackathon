@@ -1,0 +1,23 @@
+{
+  "metrics": {
+    "ticker": "TSLA",
+    "qty": 3.0,
+    "price_now_usd": 160.0,
+    "fx_now": 1380.0,
+    "avg_price_usd": 170.0,
+    "avg_cost_usd": 170.12,
+    "avg_buy_fx": 1364.7,
+    "invested_usd": 510.37,
+    "invested_krw": 696506,
+    "value_now_usd": 480.0,
+    "value_now_krw": 662400,
+    "nominal_return_usd_pct": -5.88,
+    "true_return_usd_pct": -5.95,
+    "true_return_krw_pct": -4.9,
+    "fx_effect_pp": 1.05,
+    "unrealized_pnl_krw": -34106,
+    "sell_fee_usd": 0.34,
+    "realized_loss_if_sell_krw": -34569,
+    "tax_if_sell_krw": 0
+  }
+}
